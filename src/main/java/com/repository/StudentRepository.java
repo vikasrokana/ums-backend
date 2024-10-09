@@ -12,4 +12,8 @@ public interface StudentRepository extends JpaRepository<Student,Long> {
 
     @Query(value = "select * from student where is_active=:isActive", nativeQuery = true)
     List<Student> findStudentFileList(Boolean isActive);
+    @Query(value = "SELECT * FROM student WHERE course_id = :courseId AND sem_or_year = :semOrYear AND roll_number = :rollNumber", nativeQuery = true)
+    List<Student> findByCourseIdAndSemOrYearAndRollNumber(Long courseId, String semOrYear, String rollNumber);
+    @Query(value = "SELECT * FROM student WHERE course_id = :courseId AND sem_or_year = :semOrYear", nativeQuery = true)
+    List<Student> findByCourseIdAndSemOrYear(Long courseId, String semOrYear);
 }
