@@ -1,17 +1,10 @@
-package com.model;
+package com.payload.response;
 
 import lombok.Data;
 
-import javax.persistence.*;
 import java.sql.Timestamp;
-
-
 @Data
-@Entity
-@Table(name="course")
-public class Course {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class CourseResponse {
     private Long id;
     private String courseCode;
     private String courseName;
@@ -20,5 +13,5 @@ public class Course {
     private String description;
     private Timestamp createdOn;
     private Timestamp updatedOn;
-    private Boolean isActive =true;
+    private Boolean isActive;
 }
