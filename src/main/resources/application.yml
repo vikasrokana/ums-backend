@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8092
   name: UMS
   servlet:
     context-path: /ums
@@ -19,7 +19,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
     properties:
       hibernate:
