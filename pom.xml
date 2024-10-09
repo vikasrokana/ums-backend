@@ -20,6 +20,17 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
     </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Hoxton.SR12</version> <!-- Choose a stable version -->
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -68,8 +79,10 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <version>1.18.28</version> <!-- Make sure it's the latest version -->
+            <scope>provided</scope>
         </dependency>
+
 
     </dependencies>
 
@@ -81,27 +94,18 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>com.github.ulisesbocchio</groupId>
-                <artifactId>jasypt-maven-plugin</artifactId>
-                <version>3.0.3</version>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>com.github.ulisesbocchio</groupId>-->
+<!--                <artifactId>jasypt-maven-plugin</artifactId>-->
+<!--                <version>3.0.3</version>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
     <repositories>
         <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>com.e-iceblue</id>
-            <name>e-iceblue</name>
-            <url>http://repo.e-iceblue.com/nexus/content/groups/public/</url>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
         </repository>
     </repositories>
 
