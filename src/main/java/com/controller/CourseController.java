@@ -62,7 +62,7 @@ public class CourseController {
     }
 
     @ApiOperation(value = "This API will be using to Delete Course")
-    @RequestMapping(value = {"/user/delete-course"}, method = RequestMethod.DELETE)
+    @RequestMapping(value = {"/admin/delete-course"}, method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteCourse(@RequestParam(value = "courseId",required = true) Long courseId) throws Exception {
         try{
             Boolean isDeleted = courseService.deleteCourse(courseId);

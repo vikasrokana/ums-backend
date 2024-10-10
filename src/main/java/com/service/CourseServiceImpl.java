@@ -6,17 +6,11 @@ import com.model.Course;
 import com.payload.request.CourseRequest;
 import com.payload.response.CourseResponse;
 import com.repository.CourseRepository;
-import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,7 +88,7 @@ public class CourseServiceImpl implements CourseService{
     public Course getCourseById(Long courseId) throws RecordNotFoundException {
         Course course = courseRepository.findByIdAndIsActive(courseId,true);
         if(null == course){
-            throw new RecordNotFoundException("Labour not found with id:: " + courseId);
+            throw new RecordNotFoundException("course not found with id:: " + courseId);
         }
         logger.info("Get Course using id");
         return course;
