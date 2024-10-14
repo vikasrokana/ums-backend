@@ -122,5 +122,33 @@ public class SubjectServiceImpl implements SubjectService{
         return subject;
     }
 
+    @Override
+    public List<SubjectResponse> getSubjectByCourseId(Long courseId, String semOrYear) {
+       List<SubjectResponse> subjectResponseList = new ArrayList<>();
+       List<Subject> subjectList = subjectRepository.findByCourseAndSem(courseId,semOrYear,true);
+       for(Subject subject: subjectList){
+           SubjectResponse subjectResponse = new SubjectResponse();
+           subjectResponse.setId(subject.getId());
+           subjectResponse.setCourseId(subject.getCourseId());
+           subjectResponse.setSubjectCode(subject.getSubjectCode());
+           subjectResponse.setSemOrYear(subject.getSemOrYear());
+           subjectResponse.setSubjectType(subject.getSubjectType());
+           subjectResponse.setTheoryMarks(subject.getTheoryMarks());
+           subjectResponse.setPracticalMarks(subject.getPracticalMarks());
+           subjectResponse.setDescription(subject.getDescription());
+           subjectResponse.setStatus(subject.getStatus());
+           subjectResponse.setSyllabus(subject.getSyllabus());
+           subjectResponse.setCreatedOn(subject.getCreatedOn());
+           subjectResponse.setUpdatedOn(subject.getUpdatedOn());
+           subjectResponse.setIsActive(subject.getIsActive());
+           subjectResponseList.add(subjectResponse);
+       }
+        logger.info("Get subject using course Id");
+        return subjectResponseList;
+    }
+
 
 }
+
+
+

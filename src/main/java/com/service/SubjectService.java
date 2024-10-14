@@ -16,4 +16,6 @@ public interface SubjectService {
     Boolean deleteSubject(Long subjectId);
 
     Subject getSubjectById(Long subjectId) throws RecordNotFoundException;
+
+    List<SubjectResponse> getSubjectByCourseId(Long courseId, String semOrYear);
 }

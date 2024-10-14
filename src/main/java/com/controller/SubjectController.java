@@ -92,4 +92,17 @@ public class SubjectController {
         }
     }
 
+    @ApiOperation(value = "This API will be used to get Subject details by course id")
+    @RequestMapping(value = {"/admin/get-subject-by-course-id"}, method = RequestMethod.GET)
+    public ResponseEntity<?> getSubjectByCourseId(@RequestParam(value = "courseId", required = true) Long courseId,
+                                                  @RequestParam(value = "semOrYear",required = true)String semOrYear) throws Exception {
+        try {
+            List<SubjectResponse> subjectResponseList = subjectService.getSubjectByCourseId(courseId,semOrYear);
+            return ResponseEntity.ok(subjectResponseList);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new Exception(e.getMessage());
+        }
+    }
+
 }
