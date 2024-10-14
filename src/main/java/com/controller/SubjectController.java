@@ -1,10 +1,7 @@
 package com.controller;
 
-import com.model.Course;
 import com.model.Subject;
-import com.payload.request.CourseRequest;
 import com.payload.request.SubjectRequest;
-import com.payload.response.CourseResponse;
 import com.payload.response.MessageResponse;
 import com.payload.response.SubjectResponse;
 import com.service.SubjectService;
