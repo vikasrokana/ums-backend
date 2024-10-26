@@ -1,7 +1,9 @@
 package com.service;
 
 import com.exception.RecordNotFoundException;
+import com.model.AssignSubject;
 import com.model.Faculties;
+import com.payload.request.AssignSubjectRequest;
 import com.payload.request.FacultiesRequest;
 import com.payload.response.FacultiesResponse;
 
@@ -15,4 +17,6 @@ public interface FacultiesService {
     Faculties getFacultyById(Long facultyId) throws RecordNotFoundException;
 
     Boolean deleteFaculty(Long facultyId);
+
+    AssignSubject assignSubject(AssignSubjectRequest assignSubjectRequest);
 }

@@ -3,10 +3,12 @@ package com.service;
 import com.Utility.AppUtils;
 import com.controller.FacultiesController;
 import com.exception.RecordNotFoundException;
+import com.model.AssignSubject;
 import com.model.Faculties;
-import com.model.Subject;
+import com.payload.request.AssignSubjectRequest;
 import com.payload.request.FacultiesRequest;
 import com.payload.response.FacultiesResponse;
+import com.repository.AssignSubjectRepository;
 import com.repository.FacultiesRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,9 @@ import java.util.List;
 public class FacultiesServiceImpl implements FacultiesService{
     @Autowired
     FacultiesRepository facultiesRepository;
+
+    @Autowired
+    AssignSubjectRepository assignSubjectRepository;
     private static final Logger logger = LoggerFactory.getLogger(FacultiesController.class);
     @Override
     public Faculties addFaculties(FacultiesRequest facultiesRequest) {
@@ -61,18 +66,6 @@ public class FacultiesServiceImpl implements FacultiesService{
         }
         if(null != facultiesRequest.getProfilePic()) {
             faculties.setProfilePic(facultiesRequest.getProfilePic());
-        }
-        if(null != facultiesRequest.getCourseCode()) {
-            faculties.setCourseCode(facultiesRequest.getCourseCode());
-        }
-        if(null != facultiesRequest.getSemOrYear()) {
-            faculties.setSemOrYear(facultiesRequest.getSemOrYear());
-        }
-        if(null != facultiesRequest.getSubjectCode()) {
-            faculties.setSubjectCode(facultiesRequest.getSubjectCode());
-        }
-        if(null != facultiesRequest.getPosition()) {
-            faculties.setPosition(facultiesRequest.getPosition());
         }
         if(null != facultiesRequest.getLastLogin()) {
             faculties.setLastLogin(facultiesRequest.getLastLogin());
@@ -117,10 +110,6 @@ public class FacultiesServiceImpl implements FacultiesService{
             facultiesResponse.setDob(faculties.getDob());
             facultiesResponse.setGender(faculties.getGender());
             facultiesResponse.setProfilePic(faculties.getProfilePic());
-            facultiesResponse.setCourseCode(faculties.getCourseCode());
-            facultiesResponse.setSemOrYear(faculties.getSemOrYear());
-            facultiesResponse.setSubjectCode(faculties.getSubjectCode());
-            facultiesResponse.setPosition(faculties.getPosition());
             facultiesResponse.setLastLogin(faculties.getLastLogin());
             facultiesResponse.setPassword(faculties.getPassword());
             facultiesResponse.setActiveStatus(faculties.getActiveStatus());
@@ -154,4 +143,33 @@ public class FacultiesServiceImpl implements FacultiesService{
         }
         return false;
     }
+
+    @Override
+    public AssignSubject assignSubject(AssignSubjectRequest assignSubjectRequest) {
+        AssignSubject assignSubject = new AssignSubject();
+        if(assignSubjectRequest.getId() != null){
+            assignSubject = assignSubjectRepository.findByIdAndIsActive(assignSubjectRequest.getId(),true);
+            assignSubject.setUpdatedOn(AppUtils.getCurrentIstTime());
+        }else{
+            assignSubject.setCreatedOn(AppUtils.getCurrentIstTime());
+        }
+        if(assignSubjectRequest.getSubjectCode() !=null){
+            assignSubject.setSubjectCode(assignSubjectRequest.getSubjectCode());
+        }
+        if(assignSubjectRequest.getCourseCode()!=null){
+            assignSubject.setCourseCode(assignSubjectRequest.getCourseCode());
+        }
+        if(assignSubjectRequest.getSemOrYear()!=null){
+            assignSubject.setSemOrYear(assignSubjectRequest.getSemOrYear());
+        }
+        if(assignSubjectRequest.getFacultyId()!=null){
+            assignSubject.setFacultyId(assignSubjectRequest.getFacultyId());
+        }
+        if(assignSubjectRequest.getPosition()!=null){
+            assignSubject.setPosition(assignSubjectRequest.getPosition());
+        }
+        AssignSubject assignSubject1 = assignSubjectRepository.save(assignSubject);
+        return assignSubject1;
+    }
 }
+

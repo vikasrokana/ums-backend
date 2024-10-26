@@ -23,10 +23,6 @@ public class Faculties {
     private String dob;
     private String gender;
     private String profilePic;
-    private Long CourseCode;
-    private String semOrYear;
-    private Long subjectCode;
-    private String position;
     private Date lastLogin;
     private String password;
     private Boolean activeStatus;

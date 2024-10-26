@@ -1,7 +1,11 @@
 package com.controller;
 
+import com.dao.AssignSubjectDao;
+import com.model.AssignSubject;
 import com.model.Faculties;
+import com.payload.request.AssignSubjectRequest;
 import com.payload.request.FacultiesRequest;
+import com.payload.response.AssignSubjectResponse;
 import com.payload.response.FacultiesResponse;
 import com.payload.response.MessageResponse;
 import com.service.FacultiesService;
@@ -23,6 +27,9 @@ public class FacultiesController {
 
     @Autowired
     FacultiesService facultiesService;
+
+    @Autowired
+    AssignSubjectDao assignSubjectDao;
 
     @ApiOperation(value = "This API Will be used to add faculties")
     @RequestMapping(value = {"/admin/add-faculties"},method = RequestMethod.POST)
@@ -85,6 +92,43 @@ public class FacultiesController {
             }
         }catch (Exception e){
             logger.error(e.getMessage(),e);
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "This API Will be used to assign subject to faculty")
+    @RequestMapping(value = {"/admin/assign-subject"},method = RequestMethod.POST)
+    public ResponseEntity<?> assignSubject(@RequestBody AssignSubjectRequest assignSubjectRequest, HttpServletRequest request) throws Exception {
+        try{
+            AssignSubject assignSubject = facultiesService.assignSubject(assignSubjectRequest);
+            return ResponseEntity.ok(assignSubject);
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "This API Will be used to update assign subject to faculty")
+    @RequestMapping(value = {"/admin/update-assign-subject"},method = RequestMethod.POST)
+    public ResponseEntity<?> updateAssignSubject(@RequestBody AssignSubjectRequest assignSubjectRequest, HttpServletRequest request) throws Exception {
+        try{
+            AssignSubject assignSubject = facultiesService.assignSubject(assignSubjectRequest);
+            return ResponseEntity.ok(assignSubject);
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "This API will be used to get assign subject list")
+    @RequestMapping(value = {"/admin/get-assign-subject-list"},method = RequestMethod.GET)
+    public ResponseEntity<?> getAssignSubjectList(HttpServletRequest request) throws Exception {
+        try {
+            List<AssignSubjectResponse> assignSubjectResponses = assignSubjectDao.getAssignFacultiesList();
+            return ResponseEntity.ok(assignSubjectResponses);
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             throw new Exception(e.getMessage());
         }
     }
