@@ -10,7 +10,7 @@ import com.payload.response.FacultiesResponse;
 import java.util.List;
 
 public interface FacultiesService {
-    Faculties addFaculties(FacultiesRequest facultiesRequest);
+    Faculties addFaculties(FacultiesRequest facultiesRequest,Long userId);
 
     List<FacultiesResponse> getFacultiesList() throws RecordNotFoundException;
 
@@ -18,5 +18,5 @@ public interface FacultiesService {
 
     Boolean deleteFaculty(Long facultyId);
 
-    AssignSubject assignSubject(AssignSubjectRequest assignSubjectRequest);
+    AssignSubject assignSubject(AssignSubjectRequest assignSubjectRequest,Long userId);
 }

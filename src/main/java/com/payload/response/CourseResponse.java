@@ -11,6 +11,8 @@ public class CourseResponse {
     private String semOrYear;
     private Long totalSemOrYear;
     private String description;
+    private Double tuitionFee;
+    private Double examFee;
     private Timestamp createdOn;
     private Timestamp updatedOn;
     private Boolean isActive;

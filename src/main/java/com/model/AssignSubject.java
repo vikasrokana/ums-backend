@@ -17,6 +17,9 @@ public class AssignSubject {
     private Long subjectCode;
     private Long facultyId;
     private String position;
+    private String date;
+    private Long createdBy;
+    private Long updatedBy;
     private Timestamp createdOn;
     private Timestamp updatedOn;
     private Boolean isActive =true;

@@ -21,6 +21,8 @@ public class Subject {
     private String description;
     private String status;
     private String syllabus;
+    private Long createdBy;
+    private Long updatedBy;
     private Timestamp createdOn;
     private Timestamp updatedOn;
     private Boolean isActive =true;

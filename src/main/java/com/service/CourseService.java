@@ -8,7 +8,7 @@ import com.payload.response.CourseResponse;
 import java.util.List;
 
 public interface CourseService {
-    Course addCourse(CourseRequest courseRequest);
+    Course addCourse(CourseRequest courseRequest,Long userId);
 
     List<CourseResponse> getCourseList() throws RecordNotFoundException;
 

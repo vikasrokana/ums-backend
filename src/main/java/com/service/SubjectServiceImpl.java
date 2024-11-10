@@ -23,15 +23,17 @@ public class SubjectServiceImpl implements SubjectService{
 
     private static final Logger logger = LoggerFactory.getLogger(SubjectController.class);
     @Override
-    public Subject addSubject(SubjectRequest subjectRequest) {
+    public Subject addSubject(SubjectRequest subjectRequest,Long userId) {
         Subject subject = new Subject();
 
         // Check if the subjectRequest has an ID (update existing subject or create new)
         if (subjectRequest.getId() != null) {
             subject = subjectRepository.findById(subjectRequest.getId()).orElse(new Subject());
             subject.setUpdatedOn(AppUtils.getCurrentIstTime());  // Set updated time
+            subject.setUpdatedBy(userId);
         } else {
             subject.setCreatedOn(AppUtils.getCurrentIstTime());  // Set created time
+            subject.setCreatedBy(userId);
         }
 
         // Set or update fields from subjectRequest to subject entity
