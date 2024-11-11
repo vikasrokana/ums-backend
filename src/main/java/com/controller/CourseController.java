@@ -28,7 +28,8 @@ public class CourseController {
     @RequestMapping(value = {"/admin/add-course"},method = RequestMethod.POST)
     public ResponseEntity<?> addCourse(@RequestBody CourseRequest courseRequest, HttpServletRequest request) throws Exception {
         try{
-           Course course = courseService.addCourse(courseRequest);
+            Long userId = 1L;
+           Course course = courseService.addCourse(courseRequest,userId);
             return ResponseEntity.ok(course);
         }catch (Exception e){
             logger.error(e.getMessage(),e);
@@ -40,7 +41,8 @@ public class CourseController {
     @RequestMapping(value = {"/admin/update-course"},method = RequestMethod.POST)
     public ResponseEntity<?> updateCourse(@RequestBody CourseRequest courseRequest, HttpServletRequest request) throws Exception {
         try{
-            Course course = courseService.addCourse(courseRequest);
+            Long userId = 1L;
+            Course course = courseService.addCourse(courseRequest,userId);
             return ResponseEntity.ok(course);
         }catch (Exception e){
             logger.error(e.getMessage(),e);

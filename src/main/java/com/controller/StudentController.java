@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.Timestamp;
 import java.util.List;
 
 @RestController
@@ -25,21 +24,16 @@ public class StudentController {
 
     @Autowired
     StudentService studentService;
-
     @Autowired
     EnrollmentService enrollmentService;
 
-    @ApiOperation(value = "This API will be used for student registration and automatic course enrollment")
-    @RequestMapping(value = {"/register-student"}, method = RequestMethod.POST)
-    public ResponseEntity<?> registerStudent(@RequestBody StudentRequest studentRequest, HttpServletRequest request) throws Exception {
+    @ApiOperation(value = "This API will be used for student update student details")
+    @RequestMapping(value = {"student/update-student-details"}, method = RequestMethod.POST)
+    public ResponseEntity<?> studentDetails(@RequestBody StudentRequest studentRequest, HttpServletRequest request) throws Exception {
         try {
-            // Step 1: Register the student
-            Student student = studentService.registerStudent(studentRequest);
-
-            // Step 2: Automatically enroll the student in the selected course
-            Enrollment enrollment = enrollmentService.enrollStudentInCourse(studentRequest.getCourseId(), student);
-
-            return ResponseEntity.ok("Student registered and enrolled successfully!");
+            // Step 1: update the student
+            Student student = studentService.StudentDetails(studentRequest);
+            return ResponseEntity.ok(student);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new Exception(e.getMessage());
@@ -47,17 +41,17 @@ public class StudentController {
     }
 
 
-    @ApiOperation(value = "This API will be used to update student information")
-    @RequestMapping(value = {"/update-student/{id}"}, method = RequestMethod.PUT)
-    public ResponseEntity<?> updateStudent(@PathVariable("id") Long studentId, @RequestBody StudentRequest studentRequest, HttpServletRequest request) throws Exception {
-        try {
-            Student updatedStudent = studentService.updateStudent(studentId,studentRequest);
-            return ResponseEntity.ok("Student updated successfully!");
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new Exception(e.getMessage());
-        }
-    }
+//    @ApiOperation(value = "This API will be used to update student information")
+//    @RequestMapping(value = {"/update-student/{id}"}, method = RequestMethod.PUT)
+//    public ResponseEntity<?> updateStudent(@PathVariable("id") Long studentId, @RequestBody StudentRequest studentRequest, HttpServletRequest request) throws Exception {
+//        try {
+//            Student updatedStudent = studentService.updateStudent(studentId,studentRequest);
+//            return ResponseEntity.ok("Student updated successfully!");
+//        } catch (Exception e) {
+//            logger.error(e.getMessage(), e);
+//            throw new Exception(e.getMessage());
+//        }
+//    }
 
     @ApiOperation(value = "This API will be used to get student by id")
     @RequestMapping(value = {"/get-student-by-id/{id}"}, method = RequestMethod.GET)

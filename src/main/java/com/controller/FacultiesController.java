@@ -35,7 +35,8 @@ public class FacultiesController {
     @RequestMapping(value = {"/admin/add-faculties"},method = RequestMethod.POST)
     public ResponseEntity<?> addFaculties(@RequestBody FacultiesRequest facultiesRequest, HttpServletRequest request) throws Exception {
         try{
-            Faculties faculties = facultiesService.addFaculties(facultiesRequest);
+            Long userId = 1L;
+            Faculties faculties = facultiesService.addFaculties(facultiesRequest,userId);
             return ResponseEntity.ok(faculties);
         }catch (Exception e){
             logger.error(e.getMessage(),e);
@@ -47,7 +48,8 @@ public class FacultiesController {
     @RequestMapping(value = {"/admin/update-faculties"},method = RequestMethod.POST)
     public ResponseEntity<?> updateFaculties(@RequestBody FacultiesRequest facultiesRequest, HttpServletRequest request) throws Exception {
         try{
-            Faculties faculties = facultiesService.addFaculties(facultiesRequest);
+            Long userId = 1L;
+            Faculties faculties = facultiesService.addFaculties(facultiesRequest,userId);
             return ResponseEntity.ok(faculties);
         }catch (Exception e){
             logger.error(e.getMessage(),e);
@@ -100,7 +102,9 @@ public class FacultiesController {
     @RequestMapping(value = {"/admin/assign-subject"},method = RequestMethod.POST)
     public ResponseEntity<?> assignSubject(@RequestBody AssignSubjectRequest assignSubjectRequest, HttpServletRequest request) throws Exception {
         try{
-            AssignSubject assignSubject = facultiesService.assignSubject(assignSubjectRequest);
+//            Long userId= appUtils.getUserId(request);
+            Long userId= 1L;
+            AssignSubject assignSubject = facultiesService.assignSubject(assignSubjectRequest, userId);
             return ResponseEntity.ok(assignSubject);
         }catch (Exception e){
             logger.error(e.getMessage(),e);
@@ -112,7 +116,9 @@ public class FacultiesController {
     @RequestMapping(value = {"/admin/update-assign-subject"},method = RequestMethod.POST)
     public ResponseEntity<?> updateAssignSubject(@RequestBody AssignSubjectRequest assignSubjectRequest, HttpServletRequest request) throws Exception {
         try{
-            AssignSubject assignSubject = facultiesService.assignSubject(assignSubjectRequest);
+//            Long userId= appUtils.getUserId(request);
+            Long userId= 1L;
+            AssignSubject assignSubject = facultiesService.assignSubject(assignSubjectRequest,userId);
             return ResponseEntity.ok(assignSubject);
         }catch (Exception e){
             logger.error(e.getMessage(),e);

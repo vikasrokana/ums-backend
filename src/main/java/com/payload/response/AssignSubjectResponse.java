@@ -9,6 +9,7 @@ public class AssignSubjectResponse {
     private Long subjectCode;
     private Long facultyId;
     private String position;
+    private String date;
     private String facultyName;
     private String courseName;
     private String experience;

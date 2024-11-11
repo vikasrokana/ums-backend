@@ -9,7 +9,7 @@ import com.payload.response.SubjectResponse;
 import java.util.List;
 
 public interface SubjectService {
-    Subject addSubject(SubjectRequest subjectRequest);
+    Subject addSubject(SubjectRequest subjectRequest,Long userId);
 
     List<SubjectResponse> getSubjectList() throws RecordNotFoundException;
 

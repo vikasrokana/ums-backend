@@ -42,6 +42,7 @@ public class AssignSubjectDaoImpl implements AssignSubjectDao{
                 assignSubjectResponse.setSubjectCode(rs.getLong("subject_code"));
                 assignSubjectResponse.setSemOrYear(rs.getString("sem_or_year"));
                 assignSubjectResponse.setPosition(rs.getString("position"));
+                assignSubjectResponse.setDate(rs.getString("date"));
                 assignSubjectResponse.setFacultyName(rs.getString("faculty_name"));
                 assignSubjectResponse.setCourseName(rs.getString("course_name"));
                 assignSubjectResponse.setExperience(rs.getString("experience"));

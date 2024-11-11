@@ -28,7 +28,8 @@ public class SubjectController {
     @RequestMapping(value = {"/admin/add-subject"},method = RequestMethod.POST)
     public ResponseEntity<?> addSubject(@RequestBody SubjectRequest subjectRequest, HttpServletRequest request) throws Exception {
         try{
-            Subject subject = subjectService.addSubject(subjectRequest);
+            Long userId = 1L;
+            Subject subject = subjectService.addSubject(subjectRequest,userId);
             return ResponseEntity.ok(subject);
         }catch (Exception e){
             logger.error(e.getMessage(),e);
@@ -40,7 +41,8 @@ public class SubjectController {
     @RequestMapping(value = {"/admin/update-subject"},method = RequestMethod.POST)
     public ResponseEntity<?> updateSubject(@RequestBody SubjectRequest subjectRequest, HttpServletRequest request) throws Exception {
         try{
-            Subject subject = subjectService.addSubject(subjectRequest);
+            Long userId = 1L;
+            Subject subject = subjectService.addSubject(subjectRequest,userId);
             return ResponseEntity.ok(subject);
         }catch (Exception e){
             logger.error(e.getMessage(),e);

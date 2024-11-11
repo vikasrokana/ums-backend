@@ -20,15 +20,17 @@ public class CourseServiceImpl implements CourseService{
     CourseRepository courseRepository;
     private static final Logger logger = LoggerFactory.getLogger(CourseServiceImpl.class);
     @Override
-    public Course addCourse(CourseRequest courseRequest) {
+    public Course addCourse(CourseRequest courseRequest, Long userId) {
         Course course = new Course();
         if(courseRequest.getId() != null){
             course = courseRepository.findById(courseRequest.getId()).get();
             course.setUpdatedOn(AppUtils.getCurrentIstTime());
+            course.setUpdatedBy(userId);
 
             }
         else{
             course.setCreatedOn(AppUtils.getCurrentIstTime());
+            course.setCreatedBy(userId);
         }
         if(null != courseRequest.getCourseCode()){
             course.setCourseCode(courseRequest.getCourseCode());
@@ -44,6 +46,12 @@ public class CourseServiceImpl implements CourseService{
         }
         if(null != courseRequest.getDescription()){
             course.setDescription(courseRequest.getDescription());
+        }
+        if(null != courseRequest.getExamFee()){
+            course.setExamFee(courseRequest.getExamFee());
+        }
+        if(null != courseRequest.getTuitionFee()){
+            course.setTuitionFee(courseRequest.getTuitionFee());
         }
         Course course1 = courseRepository.save(course);
         logger.info("course added successfully");
@@ -65,6 +73,8 @@ public class CourseServiceImpl implements CourseService{
             courseResponse.setDescription(course.getDescription());
             courseResponse.setSemOrYear(course.getSemOrYear());
             courseResponse.setTotalSemOrYear(course.getTotalSemOrYear());
+            courseResponse.setExamFee(course.getExamFee());
+            courseResponse.setTuitionFee(course.getTuitionFee());
             courseResponse.setCreatedOn(course.getCreatedOn());
             courseResponse.setUpdatedOn(course.getUpdatedOn());
             courseResponse.setIsActive(course.getIsActive());

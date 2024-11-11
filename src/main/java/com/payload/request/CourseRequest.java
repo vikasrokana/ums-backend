@@ -10,4 +10,6 @@ public class CourseRequest {
     private String semOrYear;
     private Long totalSemOrYear;
     private String description;
+    private Double tuitionFee;
+    private Double examFee;
 }

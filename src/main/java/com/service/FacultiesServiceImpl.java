@@ -27,24 +27,19 @@ public class FacultiesServiceImpl implements FacultiesService{
     AssignSubjectRepository assignSubjectRepository;
     private static final Logger logger = LoggerFactory.getLogger(FacultiesController.class);
     @Override
-    public Faculties addFaculties(FacultiesRequest facultiesRequest) {
+    public Faculties addFaculties(FacultiesRequest facultiesRequest,Long userId) {
        Faculties faculties = new Faculties();
 
        if(facultiesRequest.getId() != null){
            faculties = facultiesRepository.findByIdAndIsActive(facultiesRequest.getId(), true);
            faculties.setUpdatedOn(AppUtils.getCurrentIstTime());
+           faculties.setUpdatedBy(userId);
        }else {
            faculties.setCreatedOn(AppUtils.getCurrentIstTime());
+           faculties.setCreatedBy(userId);
        }
-
         if(null != facultiesRequest.getFacultyName()) {
             faculties.setFacultyName(facultiesRequest.getFacultyName());
-        }
-        if(null != facultiesRequest.getState()) {
-            faculties.setState(facultiesRequest.getState());
-        }
-        if(null != facultiesRequest.getCity()) {
-            faculties.setCity(facultiesRequest.getCity());
         }
         if(null != facultiesRequest.getEmail()) {
             faculties.setEmail(facultiesRequest.getEmail());
@@ -66,15 +61,6 @@ public class FacultiesServiceImpl implements FacultiesService{
         }
         if(null != facultiesRequest.getProfilePic()) {
             faculties.setProfilePic(facultiesRequest.getProfilePic());
-        }
-        if(null != facultiesRequest.getLastLogin()) {
-            faculties.setLastLogin(facultiesRequest.getLastLogin());
-        }
-        if(null != facultiesRequest.getPassword()) {
-            faculties.setPassword(facultiesRequest.getPassword());
-        }
-        if(null != facultiesRequest.getActiveStatus()) {
-            faculties.setActiveStatus(facultiesRequest.getActiveStatus());
         }
         if(null != facultiesRequest.getJoinDate()) {
             faculties.setJoinDate(facultiesRequest.getJoinDate());
@@ -101,8 +87,6 @@ public class FacultiesServiceImpl implements FacultiesService{
             FacultiesResponse facultiesResponse = new FacultiesResponse();
             facultiesResponse.setId(faculties.getId());
             facultiesResponse.setFacultyName(faculties.getFacultyName());
-            facultiesResponse.setState(faculties.getState());
-            facultiesResponse.setCity(faculties.getCity());
             facultiesResponse.setEmail(faculties.getEmail());
             facultiesResponse.setPhone(faculties.getPhone());
             facultiesResponse.setQualification(faculties.getQualification());
@@ -110,9 +94,6 @@ public class FacultiesServiceImpl implements FacultiesService{
             facultiesResponse.setDob(faculties.getDob());
             facultiesResponse.setGender(faculties.getGender());
             facultiesResponse.setProfilePic(faculties.getProfilePic());
-            facultiesResponse.setLastLogin(faculties.getLastLogin());
-            facultiesResponse.setPassword(faculties.getPassword());
-            facultiesResponse.setActiveStatus(faculties.getActiveStatus());
             facultiesResponse.setJoinDate(faculties.getJoinDate());
             facultiesResponse.setAddress(faculties.getAddress());
             facultiesResponse.setPinCode(faculties.getPinCode());
@@ -145,13 +126,15 @@ public class FacultiesServiceImpl implements FacultiesService{
     }
 
     @Override
-    public AssignSubject assignSubject(AssignSubjectRequest assignSubjectRequest) {
+    public AssignSubject assignSubject(AssignSubjectRequest assignSubjectRequest,Long userId) {
         AssignSubject assignSubject = new AssignSubject();
         if(assignSubjectRequest.getId() != null){
             assignSubject = assignSubjectRepository.findByIdAndIsActive(assignSubjectRequest.getId(),true);
             assignSubject.setUpdatedOn(AppUtils.getCurrentIstTime());
+            assignSubject.setUpdatedBy(userId);
         }else{
             assignSubject.setCreatedOn(AppUtils.getCurrentIstTime());
+            assignSubject.setCreatedBy(userId);
         }
         if(assignSubjectRequest.getSubjectCode() !=null){
             assignSubject.setSubjectCode(assignSubjectRequest.getSubjectCode());
@@ -168,6 +151,7 @@ public class FacultiesServiceImpl implements FacultiesService{
         if(assignSubjectRequest.getPosition()!=null){
             assignSubject.setPosition(assignSubjectRequest.getPosition());
         }
+        assignSubject.setDate(AppUtils.currentDate());
         AssignSubject assignSubject1 = assignSubjectRepository.save(assignSubject);
         return assignSubject1;
     }
