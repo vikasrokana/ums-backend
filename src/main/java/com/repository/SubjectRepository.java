@@ -18,6 +18,6 @@ public interface SubjectRepository extends JpaRepository<Subject, Long> {
     Integer deleteSubject(Long subjectId);
 
     Subject findByIdAndIsActive(Long subjectId,Boolean isActive);
-    @Query(value = "Select * from subject where course_id =:courseId and sem_or_year=:semOrYear and is_active =:isActive",nativeQuery = true)
-    List<Subject> findByCourseAndSem(Long courseId, String semOrYear, Boolean isActive);
+    @Query(value = "Select * from subject where course_id =:courseId and is_active =:isActive",nativeQuery = true)
+    List<Subject> findByCourseId(Long courseId, Boolean isActive);
 }

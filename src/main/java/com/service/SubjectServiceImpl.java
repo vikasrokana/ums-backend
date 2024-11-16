@@ -123,9 +123,9 @@ public class SubjectServiceImpl implements SubjectService{
     }
 
     @Override
-    public List<SubjectResponse> getSubjectByCourseId(Long courseId, String semOrYear) {
+    public List<SubjectResponse> getSubjectByCourseId(Long courseId) {
        List<SubjectResponse> subjectResponseList = new ArrayList<>();
-       List<Subject> subjectList = subjectRepository.findByCourseAndSem(courseId,semOrYear,true);
+       List<Subject> subjectList = subjectRepository.findByCourseId(courseId,true);
        for(Subject subject: subjectList){
            SubjectResponse subjectResponse = new SubjectResponse();
            subjectResponse.setId(subject.getId());
