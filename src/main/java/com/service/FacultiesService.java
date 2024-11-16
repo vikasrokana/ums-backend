@@ -19,4 +19,6 @@ public interface FacultiesService {
     Boolean deleteFaculty(Long facultyId);
 
     AssignSubject assignSubject(AssignSubjectRequest assignSubjectRequest,Long userId);
+
+    Faculties getFacultyDetails(Long userId) throws RecordNotFoundException;
 }

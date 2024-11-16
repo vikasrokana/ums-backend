@@ -1,10 +1,9 @@
 package com.controller;
 
-import com.model.Enrollment;
 import com.model.Student;
 import com.payload.request.StudentRequest;
+import com.payload.response.StudentFeeResponse;
 import com.service.StudentService;
-import com.service.EnrollmentService;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,15 +23,14 @@ public class StudentController {
 
     @Autowired
     StudentService studentService;
-    @Autowired
-    EnrollmentService enrollmentService;
 
     @ApiOperation(value = "This API will be used for student update student details")
     @RequestMapping(value = {"student/update-student-details"}, method = RequestMethod.POST)
     public ResponseEntity<?> studentDetails(@RequestBody StudentRequest studentRequest, HttpServletRequest request) throws Exception {
         try {
             // Step 1: update the student
-            Student student = studentService.StudentDetails(studentRequest);
+            Long userId = 2L;
+            Student student = studentService.StudentDetails(studentRequest,userId);
             return ResponseEntity.ok(student);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -52,6 +50,19 @@ public class StudentController {
 //            throw new Exception(e.getMessage());
 //        }
 //    }
+
+    @ApiOperation(value = "This API will be used to get student details")
+    @RequestMapping(value = {"student/get-student-details"}, method = RequestMethod.GET)
+    public ResponseEntity<?> getStudentDetails() throws Exception {
+        try {
+            Long userId = 2L;
+            Student student = studentService.findStudentDetails(userId);
+            return ResponseEntity.ok(student);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new Exception(e.getMessage());
+        }
+    }
 
     @ApiOperation(value = "This API will be used to get student by id")
     @RequestMapping(value = {"/get-student-by-id/{id}"}, method = RequestMethod.GET)
@@ -78,6 +89,19 @@ public class StudentController {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return ResponseEntity.badRequest().body("Error fetching student list");
+        }
+    }
+
+    @ApiOperation(value = "This API will be used to get the students fee list")
+    @RequestMapping(value = {"admin/get-students-fee-list"}, method = RequestMethod.GET)
+    public ResponseEntity<?> getStudentsFeeList(HttpServletRequest request) {
+
+        try {
+            List<StudentFeeResponse> studentFeesList = studentService.getStudentFeeList();
+            return ResponseEntity.ok(studentFeesList);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return ResponseEntity.badRequest().body("Error fetching student fee list");
         }
     }
 }

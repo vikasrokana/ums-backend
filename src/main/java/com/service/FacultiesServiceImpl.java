@@ -25,7 +25,7 @@ public class FacultiesServiceImpl implements FacultiesService{
 
     @Autowired
     AssignSubjectRepository assignSubjectRepository;
-    private static final Logger logger = LoggerFactory.getLogger(FacultiesController.class);
+    private static final Logger logger = LoggerFactory.getLogger(FacultiesServiceImpl.class);
     @Override
     public Faculties addFaculties(FacultiesRequest facultiesRequest,Long userId) {
        Faculties faculties = new Faculties();
@@ -154,6 +154,16 @@ public class FacultiesServiceImpl implements FacultiesService{
         assignSubject.setDate(AppUtils.currentDate());
         AssignSubject assignSubject1 = assignSubjectRepository.save(assignSubject);
         return assignSubject1;
+    }
+
+    @Override
+    public Faculties getFacultyDetails(Long userId) throws RecordNotFoundException {
+        Faculties faculties = facultiesRepository.findByIdAndIsActive(userId,true);
+        if(null == faculties){
+            throw new RecordNotFoundException("faculty details not found with id:: " + userId);
+        }
+        logger.info("Get faculty details id");
+        return faculties;
     }
 }
 

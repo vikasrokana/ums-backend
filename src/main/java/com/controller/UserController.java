@@ -1,9 +1,6 @@
 package com.controller;
 
-import com.model.Enrollment;
-import com.model.Student;
 import com.model.User;
-import com.payload.request.StudentRequest;
 import com.payload.request.UserRequest;
 import com.payload.response.MessageResponse;
 import com.repository.UserRepository;
@@ -15,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @CrossOrigin("*")
