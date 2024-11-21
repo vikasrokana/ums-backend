@@ -1,19 +1,30 @@
 package com.service;
 import com.Utility.AppUtils;
+import com.controller.FacultiesController;
+import com.exception.RecordNotFoundException;
+import com.model.Faculties;
 import com.model.Student;
+import com.model.StudentFees;
+import com.payload.request.StudentFeeRequest;
 import com.payload.request.StudentRequest;
+import com.payload.response.StudentFeeResponse;
 import com.repository.StudentRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class StudentServiceImpl implements StudentService{
     @Autowired
     StudentRepository studentRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(StudentServiceImpl.class);
     @Override
     public Student registerStudent(StudentRequest studentRequest) {
 
@@ -52,8 +63,8 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
-    public Student StudentDetails(StudentRequest studentRequest) {
-        Student student =studentRepository.findByEmail(studentRequest.getEmail(),true);
+    public Student StudentDetails(StudentRequest studentRequest, Long userId) {
+        Student student =studentRepository.findByIdAndIsActive(studentRequest.getId(),true);
         if (studentRequest.getStudentName() != null) {
             student.setStudentName(studentRequest.getStudentName());
         }
@@ -99,6 +110,44 @@ public class StudentServiceImpl implements StudentService{
         student.setUpdatedOn(AppUtils.getCurrentIstTime());
         Student student1 = studentRepository.save(student);
         return student1;
+    }
+
+    @Override
+    public Student findStudentDetails(Long userId) throws RecordNotFoundException {
+        Student student = studentRepository.findByIdAndIsActive(userId,true);
+        if(null == student){
+            throw new RecordNotFoundException("faculty details not found with id:: " + userId);
+        }
+        logger.info("Get faculty detail");
+        return student;
+    }
+
+    @Override
+    public List<StudentFeeResponse> getStudentFeeList() throws RecordNotFoundException {
+        List<StudentFeeResponse> studentFeeResponses = new ArrayList<>();
+        List<StudentFees> studentFeesList = studentRepository.findByIsActive(true);
+        if(studentFeesList.isEmpty()){
+            throw new RecordNotFoundException("student list is not found");
+        }
+        for(StudentFees fees: studentFeesList){
+            StudentFeeResponse studentFeeResponse = new StudentFeeResponse();
+            studentFeeResponse.setId(fees.getId());
+            studentFeeResponse.setStudentId(fees.getStudentId());
+            studentFeeResponse.setEnrollmentFee(fees.getEnrollmentFee());
+            studentFeeResponse.setTuitionFee(fees.getTuitionFee());
+            studentFeeResponse.setExamFee(fees.getExamFee());
+            studentFeeResponse.setPaidFee(fees.getPaidFee());
+            studentFeeResponse.setDueFee(fees.getDueFee());
+            studentFeeResponse.setPaidBy(fees.getPaidBy());
+            studentFeeResponse.setDueDate(fees.getDueDate());
+            studentFeeResponse.setCreatedBy(fees.getCreatedBy());
+            studentFeeResponse.setUpdateBy(fees.getUpdateBy());
+            studentFeeResponse.setCreatedOn(fees.getCreatedOn());
+            studentFeeResponse.setUpdatedOn(fees.getUpdatedOn());
+            studentFeeResponses.add(studentFeeResponse);
+        }
+        logger.info("get student fee list");
+        return studentFeeResponses;
     }
 
 

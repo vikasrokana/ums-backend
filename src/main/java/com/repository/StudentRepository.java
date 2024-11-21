@@ -1,6 +1,7 @@
 package com.repository;
 
 import com.model.Student;
+import com.model.StudentFees;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -18,4 +19,8 @@ public interface StudentRepository extends JpaRepository<Student,Long> {
     List<Student> findByCourseIdAndSemOrYear(Long courseId, String semOrYear);
     @Query(value = "select * from student where email =:email and is_active =:isActive", nativeQuery = true)
     Student findByEmail(String email,Boolean isActive);
+    @Query(value = "select * from student where id =:id and is_active =:isActive", nativeQuery = true)
+    Student findByIdAndIsActive(Long id,Boolean isActive);
+    @Query(value = "select * from student where is_active =:isActive", nativeQuery = true)
+    List<StudentFees> findByIsActive(Boolean isActive);
 }

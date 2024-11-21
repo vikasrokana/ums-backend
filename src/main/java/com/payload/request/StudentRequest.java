@@ -7,6 +7,7 @@ import java.time.LocalDate;
 
 @Data
 public class StudentRequest {
+    private Long id;
     private Long courseId;
     private String semOrYear;
     private String optionalSubject;

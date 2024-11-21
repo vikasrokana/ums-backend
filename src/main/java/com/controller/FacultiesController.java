@@ -31,21 +31,8 @@ public class FacultiesController {
     @Autowired
     AssignSubjectDao assignSubjectDao;
 
-    @ApiOperation(value = "This API Will be used to add faculties")
-    @RequestMapping(value = {"/admin/add-faculties"},method = RequestMethod.POST)
-    public ResponseEntity<?> addFaculties(@RequestBody FacultiesRequest facultiesRequest, HttpServletRequest request) throws Exception {
-        try{
-            Long userId = 1L;
-            Faculties faculties = facultiesService.addFaculties(facultiesRequest,userId);
-            return ResponseEntity.ok(faculties);
-        }catch (Exception e){
-            logger.error(e.getMessage(),e);
-            throw new Exception(e.getMessage());
-        }
-    }
-
     @ApiOperation(value = "This API Will be used to update faculties")
-    @RequestMapping(value = {"/admin/update-faculties"},method = RequestMethod.POST)
+    @RequestMapping(value = {"/faculty/update-faculties"},method = RequestMethod.POST)
     public ResponseEntity<?> updateFaculties(@RequestBody FacultiesRequest facultiesRequest, HttpServletRequest request) throws Exception {
         try{
             Long userId = 1L;
@@ -70,6 +57,18 @@ public class FacultiesController {
         }
     }
 
+    @ApiOperation(value = "This API will be used to get Faculties by id")
+    @RequestMapping(value = {"/faculty/get-faculties-details"}, method = RequestMethod.GET)
+    public ResponseEntity<?> getFacultyDetails() throws Exception {
+        try {
+            Long userId = 1L;
+            Faculties faculties = facultiesService.getFacultyDetails(userId);
+            return ResponseEntity.ok(faculties);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new Exception(e.getMessage());
+        }
+    }
     @ApiOperation(value = "This API will be used to get Faculties by id")
     @RequestMapping(value = {"/admin/get-faculties-by-id"}, method = RequestMethod.GET)
     public ResponseEntity<?> getSubjectById(@RequestParam(value = "facultyId", required = true) Long facultyId) throws Exception {
