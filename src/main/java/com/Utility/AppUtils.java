@@ -1,5 +1,11 @@
 package com.Utility;
 
+import com.config.AppProperties;
+import com.nimbusds.jose.shaded.gson.Gson;
+import com.security.TokenProvider;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +18,15 @@ import java.util.TimeZone;
 
 @Service
 public class AppUtils {
+    @Autowired
+    AppProperties appProperties;
+
+    @Autowired
+    private TokenProvider tokenProvider;
+    private static final Gson gson = new Gson();
+    public static String toJson(Object obj) {
+        return gson.toJson(obj);
+    }
     public static Timestamp getCurrentIstTime(){
 //		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Calcutta"));
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Kolkata"));
@@ -39,10 +54,25 @@ public class AppUtils {
         // Combine year, course code, and unique number to form the enrollment number
         return currentYear + "-" + courseCode + "-" + uniqueNumber;
     }
-//    public Long getUserId(HttpServletRequest request) {
-//        String role = getCurrentUserRole(request);
-//        String jwt = tokenProvider.getJwtFromRequest(request);
-//        Long userId = tokenProvider.getUserIdFromToken(jwt, role);
-//        return userId;
-//    }
+    public Long getUserId(HttpServletRequest request) {
+        String role = getCurrentUserRole(request);
+        String jwt = tokenProvider.getJwtFromRequest(request);
+        Long userId = tokenProvider.getUserIdFromToken(jwt, role);
+        return userId;
+    }
+
+    public String getCurrentUserRole(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("Authorization");
+        String role = null;
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String token = authorizationHeader.substring(7);
+            Claims claims = Jwts.parser()
+                    .setSigningKey(appProperties.getAuth().getTokenSecret())
+                    .parseClaimsJws(token)
+                    .getBody();
+            role = (String) claims.get("role");
+            return role;
+        }
+        return null;
+    }
 }

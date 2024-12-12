@@ -8,11 +8,13 @@ import com.payload.request.UserRequest;
 import com.repository.FacultiesRepository;
 import com.repository.StudentRepository;
 import com.repository.UserRepository;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService{
+    static Logger logger = Logger.getLogger(UserServiceImpl.class);
     @Autowired
     UserRepository userRepository;
 
@@ -65,5 +67,12 @@ public class UserServiceImpl implements UserService{
             facultiesRepository.save(faculty);
         }
         return  user1;
+    }
+
+    @Override
+    public User getUserById(Long id) {
+        User user = userRepository.findByIdAndIsActive(id, true);
+        logger.info("Get user by id");
+        return user;
     }
 }

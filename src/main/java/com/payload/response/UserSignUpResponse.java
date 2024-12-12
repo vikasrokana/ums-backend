@@ -1,16 +1,10 @@
-package com.model;
+package com.payload.response;
 
 import lombok.Data;
 
-import javax.persistence.*;
 import java.sql.Timestamp;
-
 @Data
-@Entity
-@Table(name="user")
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UserSignUpResponse {
     private Long id;
     private String firstName;
     private String lastName;
@@ -20,9 +14,9 @@ public class User {
     private String password;
     private String role;
     private String lastLogin;
-    private Boolean isLoggedIn = false;
+    private Boolean isLoggedIn;
+    private Boolean isVerified;
     private Timestamp createdOn;
     private Timestamp updatedOn;
-    private Boolean isActive= true;
-
+    private String authToken;
 }

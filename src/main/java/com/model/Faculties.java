@@ -24,6 +24,7 @@ public class Faculties {
     private Long userId;
     private String address;
     private Long pinCode;
+    private Boolean isVerified = false;
     private Timestamp createdOn;
     private Timestamp updatedOn;
     private Long createdBy;
