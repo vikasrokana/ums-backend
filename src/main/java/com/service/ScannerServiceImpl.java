@@ -1,12 +1,16 @@
 package com.service;
 
+import com.Utility.AppUtils;
 import com.exception.RecordNotFoundException;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfWriter;
+import com.model.Course;
 import com.model.ExamFileRecord;
-import com.model.Student;
+import com.model.MarkSheet;
+import com.payload.request.MarkSheetRequest;
 import com.repository.ExamFileRecordRepository;
+import com.repository.MarkSheetRepository;
 import com.repository.StudentRepository;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
@@ -14,6 +18,8 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,9 +36,12 @@ public class ScannerServiceImpl implements ScannerService {
 
     @Autowired
     StudentRepository studentRepository;
+    @Autowired
+    MarkSheetRepository markSheetRepository;
 
     @Autowired
     ExamFileRecordRepository examFileRecordRepository;
+    private static final Logger logger = LoggerFactory.getLogger(ScannerServiceImpl.class);
 
     @Override
     public String scanFileAndGeneratePDF(File convFile) throws FileNotFoundException, DocumentException, TesseractException {
@@ -142,5 +151,84 @@ public class ScannerServiceImpl implements ScannerService {
             throw new RecordNotFoundException("exam file not found with found");
         }
         return examFileRecordList;
+    }
+
+    @Override
+    public ExamFileRecord getExamSheetById(Long sheetId) throws RecordNotFoundException {
+        ExamFileRecord examFileRecord = examFileRecordRepository.findByIdAndIsActive(sheetId,true);
+        if(null == examFileRecord){
+            throw new RecordNotFoundException("exam sheet not found with id:: " + sheetId);
+        }
+        logger.info("Get exam sheet using id");
+        return examFileRecord;
+    }
+
+    @Override
+    public MarkSheet addMarks(MarkSheetRequest markSheetRequest, Long userId) {
+        MarkSheet markSheet = new MarkSheet();
+        if(markSheetRequest.getId() != null){
+            markSheet = markSheetRepository.findByMarkIdAndIsActive(markSheetRequest.getId(),true);
+            markSheet.setUpdatedBy(userId);
+            markSheet.setUpdatedOn(AppUtils.getCurrentIstTime());
+        }
+        else{
+            markSheet.setCreatedBy(userId);
+            markSheet.setCreatedOn(AppUtils.getCurrentIstTime());
+        }
+        if(markSheetRequest.getExamRecordId() !=null){
+            markSheet.setExamRecordId(markSheetRequest.getExamRecordId());
+        }
+        if(markSheetRequest.getRollNumber() !=null){
+            markSheet.setRollNumber(markSheetRequest.getRollNumber());
+        }
+        if (markSheetRequest.getSubjectCode() != null) {
+            markSheet.setSubjectCode(markSheetRequest.getSubjectCode());
+        }
+        if (markSheetRequest.getQ1() != null) {
+            markSheet.setQ1(markSheetRequest.getQ1());
+        }
+        if (markSheetRequest.getQ2() != null) {
+            markSheet.setQ2(markSheetRequest.getQ2());
+        }
+        if (markSheetRequest.getQ3() != null) {
+            markSheet.setQ3(markSheetRequest.getQ3());
+        }
+        if (markSheetRequest.getQ4() != null) {
+            markSheet.setQ4(markSheetRequest.getQ4());
+        }
+        if (markSheetRequest.getQ5() != null) {
+            markSheet.setQ5(markSheetRequest.getQ5());
+        }
+        if (markSheetRequest.getQ6() != null) {
+            markSheet.setQ6(markSheetRequest.getQ6());
+        }
+        if (markSheetRequest.getQ7() != null) {
+            markSheet.setQ7(markSheetRequest.getQ7());
+        }
+        if (markSheetRequest.getQ8() != null) {
+            markSheet.setQ8(markSheetRequest.getQ8());
+        }
+        if (markSheetRequest.getQ9() != null) {
+            markSheet.setQ9(markSheetRequest.getQ9());
+        }
+        if (markSheetRequest.getQ10() != null) {
+            markSheet.setQ10(markSheetRequest.getQ10());
+        }
+        if (markSheetRequest.getTotalMarks() != null) {
+            markSheet.setTotalMarks(markSheetRequest.getTotalMarks());
+        }
+        MarkSheet markSheet1 = markSheetRepository.save(markSheet);
+        logger.info("mark sheet added successfully");
+        return markSheet1;
+    }
+
+    @Override
+    public MarkSheet getMarksById(Long marksId) throws RecordNotFoundException {
+        MarkSheet markSheet = markSheetRepository.findByMarkIdAndIsActive(marksId,true);
+        if(null == markSheet){
+            throw new RecordNotFoundException("marks sheet not found with id:: " + marksId);
+        }
+        logger.info("Get marks sheet using id");
+        return markSheet;
     }
 }

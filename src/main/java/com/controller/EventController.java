@@ -1,5 +1,6 @@
 package com.controller;
 
+import com.Utility.AppUtils;
 import com.model.Course;
 import com.model.Event;
 import com.payload.request.EventRequest;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -25,11 +27,14 @@ public class EventController {
     @Autowired
     EventService eventService;
 
+    @Autowired
+    AppUtils appUtils;
+
     @ApiOperation(value = "This api will be used to create the events")
     @RequestMapping(value = {"/admin/add-event"}, method = RequestMethod.POST)
-    public ResponseEntity<?>  AddEvent(@RequestBody EventRequest eventRequest) throws Exception{
+    public ResponseEntity<?>  AddEvent(@RequestBody EventRequest eventRequest, HttpServletRequest request) throws Exception{
         try{
-            Long userId = 1L;
+            Long userId = appUtils.getUserId(request);
              Event event = eventService.addEvent(eventRequest, userId);
             return ResponseEntity.ok(event);
         }
@@ -41,9 +46,9 @@ public class EventController {
 
     @ApiOperation(value = "This api will be used to update the event")
     @RequestMapping(value = {"/admin/update-event"}, method = RequestMethod.POST)
-    public ResponseEntity<?>  UpdateEvent(@RequestBody EventRequest eventRequest) throws Exception{
+    public ResponseEntity<?>  UpdateEvent(@RequestBody EventRequest eventRequest, HttpServletRequest request) throws Exception{
         try{
-            Long userId = 1L;
+            Long userId =appUtils.getUserId(request);
             Event event = eventService.addEvent(eventRequest, userId);
             return ResponseEntity.ok(event);
         }

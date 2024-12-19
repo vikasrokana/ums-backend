@@ -10,6 +10,7 @@ import com.repository.StudentRepository;
 import com.repository.UserRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,7 +18,8 @@ public class UserServiceImpl implements UserService{
     static Logger logger = Logger.getLogger(UserServiceImpl.class);
     @Autowired
     UserRepository userRepository;
-
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Autowired
     StudentRepository studentRepository;
     @Autowired
@@ -42,7 +44,7 @@ public class UserServiceImpl implements UserService{
             user.setProfilePic(userRequest.getProfilePic());
         }
         if (null != userRequest.getPassword()) {
-            user.setPassword(userRequest.getPassword());
+            user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         }
         if (null != userRequest.getRole()) {
             user.setRole(userRequest.getRole());

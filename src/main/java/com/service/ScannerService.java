@@ -3,7 +3,9 @@ package com.service;
 import com.exception.RecordNotFoundException;
 import com.lowagie.text.DocumentException;
 import com.model.ExamFileRecord;
+import com.model.MarkSheet;
 import com.model.Student;
+import com.payload.request.MarkSheetRequest;
 import net.sourceforge.tess4j.TesseractException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,4 +24,10 @@ public interface ScannerService {
     ExamFileRecord saveStudentFile(MultipartFile file) throws IOException;
 
     List<ExamFileRecord> getExamFileList() throws RecordNotFoundException;
+
+    ExamFileRecord getExamSheetById(Long sheetId) throws RecordNotFoundException;
+
+    MarkSheet addMarks(MarkSheetRequest markSheetRequest, Long userId);
+
+    MarkSheet getMarksById(Long marksId) throws RecordNotFoundException;
 }

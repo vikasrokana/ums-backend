@@ -1,5 +1,6 @@
 package com.controller;
 
+import com.Utility.AppUtils;
 import com.dao.AssignSubjectDao;
 import com.model.AssignSubject;
 import com.model.Faculties;
@@ -27,7 +28,8 @@ public class FacultiesController {
 
     @Autowired
     FacultiesService facultiesService;
-
+    @Autowired
+    AppUtils appUtils;
     @Autowired
     AssignSubjectDao assignSubjectDao;
 
@@ -35,7 +37,7 @@ public class FacultiesController {
     @RequestMapping(value = {"/faculty/update-faculties"},method = RequestMethod.POST)
     public ResponseEntity<?> updateFaculties(@RequestBody FacultiesRequest facultiesRequest, HttpServletRequest request) throws Exception {
         try{
-            Long userId = 1L;
+            Long userId = appUtils.getUserId(request);
             Faculties faculties = facultiesService.addFaculties(facultiesRequest,userId);
             return ResponseEntity.ok(faculties);
         }catch (Exception e){
@@ -59,9 +61,9 @@ public class FacultiesController {
 
     @ApiOperation(value = "This API will be used to get Faculties by id")
     @RequestMapping(value = {"/faculty/get-faculties-details"}, method = RequestMethod.GET)
-    public ResponseEntity<?> getFacultyDetails() throws Exception {
+    public ResponseEntity<?> getFacultyDetails(HttpServletRequest request) throws Exception {
         try {
-            Long userId = 1L;
+            Long userId = appUtils.getUserId(request);
             Faculties faculties = facultiesService.getFacultyDetails(userId);
             return ResponseEntity.ok(faculties);
         } catch (Exception e) {
@@ -102,7 +104,7 @@ public class FacultiesController {
     public ResponseEntity<?> assignSubject(@RequestBody AssignSubjectRequest assignSubjectRequest, HttpServletRequest request) throws Exception {
         try{
 //            Long userId= appUtils.getUserId(request);
-            Long userId= 1L;
+            Long userId= appUtils.getUserId(request);
             AssignSubject assignSubject = facultiesService.assignSubject(assignSubjectRequest, userId);
             return ResponseEntity.ok(assignSubject);
         }catch (Exception e){
@@ -116,7 +118,7 @@ public class FacultiesController {
     public ResponseEntity<?> updateAssignSubject(@RequestBody AssignSubjectRequest assignSubjectRequest, HttpServletRequest request) throws Exception {
         try{
 //            Long userId= appUtils.getUserId(request);
-            Long userId= 1L;
+            Long userId=appUtils.getUserId(request);
             AssignSubject assignSubject = facultiesService.assignSubject(assignSubjectRequest,userId);
             return ResponseEntity.ok(assignSubject);
         }catch (Exception e){

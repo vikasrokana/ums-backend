@@ -1,7 +1,6 @@
 package com.service;
 
 import com.Utility.AppUtils;
-import com.controller.FacultiesController;
 import com.exception.RecordNotFoundException;
 import com.model.AssignSubject;
 import com.model.Faculties;

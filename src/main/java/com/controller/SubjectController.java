@@ -1,5 +1,6 @@
 package com.controller;
 
+import com.Utility.AppUtils;
 import com.model.Subject;
 import com.payload.request.SubjectRequest;
 import com.payload.response.MessageResponse;
@@ -23,12 +24,14 @@ public class SubjectController {
     private static final Logger logger = LoggerFactory.getLogger(SubjectController.class);
     @Autowired
     SubjectService subjectService;
+    @Autowired
+    AppUtils appUtils;
 
     @ApiOperation(value = "This API Will be used to add subject")
     @RequestMapping(value = {"/admin/add-subject"},method = RequestMethod.POST)
     public ResponseEntity<?> addSubject(@RequestBody SubjectRequest subjectRequest, HttpServletRequest request) throws Exception {
         try{
-            Long userId = 1L;
+            Long userId =appUtils.getUserId(request);
             Subject subject = subjectService.addSubject(subjectRequest,userId);
             return ResponseEntity.ok(subject);
         }catch (Exception e){
@@ -41,7 +44,7 @@ public class SubjectController {
     @RequestMapping(value = {"/admin/update-subject"},method = RequestMethod.POST)
     public ResponseEntity<?> updateSubject(@RequestBody SubjectRequest subjectRequest, HttpServletRequest request) throws Exception {
         try{
-            Long userId = 1L;
+            Long userId = appUtils.getUserId(request);
             Subject subject = subjectService.addSubject(subjectRequest,userId);
             return ResponseEntity.ok(subject);
         }catch (Exception e){

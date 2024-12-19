@@ -1,5 +1,6 @@
 package com.controller;
 
+import com.Utility.AppUtils;
 import com.model.Course;
 import com.payload.request.CourseRequest;
 import com.payload.response.CourseResponse;
@@ -23,12 +24,15 @@ public class CourseController {
     private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
 
     @Autowired
+    AppUtils appUtils;
+
+    @Autowired
     CourseService courseService;
     @ApiOperation(value = "This API Will be used to add Course")
     @RequestMapping(value = {"/admin/add-course"},method = RequestMethod.POST)
     public ResponseEntity<?> addCourse(@RequestBody CourseRequest courseRequest, HttpServletRequest request) throws Exception {
         try{
-            Long userId = 1L;
+            Long userId = appUtils.getUserId(request);
            Course course = courseService.addCourse(courseRequest,userId);
             return ResponseEntity.ok(course);
         }catch (Exception e){
@@ -41,7 +45,7 @@ public class CourseController {
     @RequestMapping(value = {"/admin/update-course"},method = RequestMethod.POST)
     public ResponseEntity<?> updateCourse(@RequestBody CourseRequest courseRequest, HttpServletRequest request) throws Exception {
         try{
-            Long userId = 1L;
+            Long userId = appUtils.getUserId(request);
             Course course = courseService.addCourse(courseRequest,userId);
             return ResponseEntity.ok(course);
         }catch (Exception e){

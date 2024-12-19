@@ -8,8 +8,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "roll_generator")
 public class RollGenerator {
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

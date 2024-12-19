@@ -1,5 +1,6 @@
 package com.controller;
 
+import com.Utility.AppUtils;
 import com.model.Course;
 import com.model.Announcement;
 import com.payload.request.AnnouncementRequest;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -21,15 +23,16 @@ import java.util.List;
 @RequestMapping("/api/")
 public class AnnouncementController {
     private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
-
+    @Autowired
+    AppUtils appUtils;
     @Autowired
     AnnouncementService announcementService;
 
     @ApiOperation(value = "This api will be used to create the announcements")
     @RequestMapping(value = {"/admin/add-announcement"}, method = RequestMethod.POST)
-    public ResponseEntity<?>  AddAnnouncement(@RequestBody AnnouncementRequest announcementRequest) throws Exception{
+    public ResponseEntity<?>  AddAnnouncement(@RequestBody AnnouncementRequest announcementRequest, HttpServletRequest request) throws Exception{
         try{
-            Long userId = 1L;
+            Long userId = appUtils.getUserId(request);
             Announcement announcement = announcementService.addAnnouncement(announcementRequest, userId);
             return ResponseEntity.ok(announcement);
         }
@@ -41,9 +44,9 @@ public class AnnouncementController {
 
     @ApiOperation(value = "This api will be used to update the announcement")
     @RequestMapping(value = {"/admin/update-announcement"}, method = RequestMethod.POST)
-    public ResponseEntity<?>  UpdateAnnouncement(@RequestBody AnnouncementRequest announcementRequest) throws Exception{
+    public ResponseEntity<?>  UpdateAnnouncement(@RequestBody AnnouncementRequest announcementRequest, HttpServletRequest request) throws Exception{
         try{
-            Long userId = 1L;
+            Long userId = appUtils.getUserId(request);
             Announcement announcement = announcementService.addAnnouncement(announcementRequest, userId);
             return ResponseEntity.ok(announcement);
         }

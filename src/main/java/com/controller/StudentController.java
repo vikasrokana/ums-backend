@@ -1,5 +1,6 @@
 package com.controller;
 
+import com.Utility.AppUtils;
 import com.model.Student;
 import com.payload.request.StudentRequest;
 import com.payload.response.StudentFeeResponse;
@@ -20,7 +21,8 @@ import java.util.List;
 public class StudentController {
 
     private static final Logger logger = LoggerFactory.getLogger(StudentController.class);
-
+    @Autowired
+    AppUtils appUtils;
     @Autowired
     StudentService studentService;
 
@@ -29,7 +31,7 @@ public class StudentController {
     public ResponseEntity<?> studentDetails(@RequestBody StudentRequest studentRequest, HttpServletRequest request) throws Exception {
         try {
             // Step 1: update the student
-            Long userId = 2L;
+            Long userId = appUtils.getUserId(request);
             Student student = studentService.StudentDetails(studentRequest,userId);
             return ResponseEntity.ok(student);
         } catch (Exception e) {
@@ -53,9 +55,9 @@ public class StudentController {
 
     @ApiOperation(value = "This API will be used to get student details")
     @RequestMapping(value = {"student/get-student-details"}, method = RequestMethod.GET)
-    public ResponseEntity<?> getStudentDetails() throws Exception {
+    public ResponseEntity<?> getStudentDetails(HttpServletRequest request) throws Exception {
         try {
-            Long userId = 2L;
+            Long userId =appUtils.getUserId(request);
             Student student = studentService.findStudentDetails(userId);
             return ResponseEntity.ok(student);
         } catch (Exception e) {
