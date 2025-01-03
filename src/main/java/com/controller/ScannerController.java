@@ -1,10 +1,9 @@
 package com.controller;
 
 import com.Utility.AppUtils;
-import com.model.Course;
+
 import com.model.ExamFileRecord;
 import com.model.MarkSheet;
-import com.payload.request.CourseRequest;
 import com.payload.request.MarkSheetRequest;
 import com.payload.response.MessageResponse;
 import com.service.ScannerService;
