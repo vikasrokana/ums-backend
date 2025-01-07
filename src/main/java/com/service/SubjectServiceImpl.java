@@ -40,6 +40,9 @@ public class SubjectServiceImpl implements SubjectService{
         if (null != subjectRequest.getCourseId()) {
             subject.setCourseId(subjectRequest.getCourseId());
         }
+        if(null != subjectRequest.getSubjectName()){
+            subject.setSubjectName(subjectRequest.getSubjectName());
+        }
         if (null != subjectRequest.getSubjectCode()) {
             subject.setSubjectCode(subjectRequest.getSubjectCode());
         }
@@ -85,6 +88,7 @@ public class SubjectServiceImpl implements SubjectService{
             SubjectResponse subjectResponse = new SubjectResponse();
             subjectResponse.setId(subject.getId());
             subjectResponse.setCourseId(subject.getCourseId());
+            subjectResponse.setSubjectName(subject.getSubjectName());
             subjectResponse.setSubjectCode(subject.getSubjectCode());
             subjectResponse.setSemOrYear(subject.getSemOrYear());
             subjectResponse.setSubjectType(subject.getSubjectType());
@@ -130,6 +134,7 @@ public class SubjectServiceImpl implements SubjectService{
            SubjectResponse subjectResponse = new SubjectResponse();
            subjectResponse.setId(subject.getId());
            subjectResponse.setCourseId(subject.getCourseId());
+           subjectResponse.setSubjectName(subject.getSubjectName());
            subjectResponse.setSubjectCode(subject.getSubjectCode());
            subjectResponse.setSemOrYear(subject.getSemOrYear());
            subjectResponse.setSubjectType(subject.getSubjectType());

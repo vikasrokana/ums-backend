@@ -128,7 +128,7 @@ public class FacultiesController {
     }
 
     @ApiOperation(value = "This API will be used to get assign subject list")
-    @RequestMapping(value = {"/admin/get-assign-subject-list"},method = RequestMethod.GET)
+    @RequestMapping(value = {"/faculty/get-assign-subject-list"},method = RequestMethod.GET)
     public ResponseEntity<?> getAssignSubjectList(HttpServletRequest request) throws Exception {
         try {
             List<AssignSubjectResponse> assignSubjectResponses = assignSubjectDao.getAssignFacultiesList();

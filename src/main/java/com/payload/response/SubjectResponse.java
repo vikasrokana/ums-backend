@@ -7,8 +7,9 @@ import java.sql.Timestamp;
 public class SubjectResponse {
     private Long id;
     private Long courseId;
-    private Long subjectCode;
-    private String semOrYear;
+    private String subjectCode;
+    private String subjectName;
+    private Long semOrYear;
     private String subjectType;
     private Long theoryMarks;
     private Long practicalMarks;

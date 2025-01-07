@@ -1,25 +1,20 @@
-package com.model;
+package com.payload.response;
 
 import lombok.Data;
-import javax.persistence.*;
-import java.sql.Timestamp;
 
 @Data
-@Entity
-@Table(name = "student")
-public class Student {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class StudentResponse {
     private Long id;
     private Long courseId;
     private Long semOrYear;
-    private String enrollmentNumber;
-    private String rollNumber;
     private String optionalSubject;
     private String studentName;
     private String email;
     private String phone;
-    private String  dob;
+    private String enrollmentNumber;
+    private String rollNumber;
+    private Long userId;
+    private String dob;
     private String gender;
     private String address;
     private String pinCode;
@@ -29,10 +24,4 @@ public class Student {
     private String motherOccupation;
     private String profilePic;
     private String admissionDate;
-    private Long userId;
-    private Boolean isActive = true;
-    private Long createdBy;
-    private Long updatedBy;
-    private Timestamp createdOn;
-    private Timestamp updatedOn;
 }

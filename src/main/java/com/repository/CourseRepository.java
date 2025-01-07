@@ -18,4 +18,6 @@ public interface CourseRepository extends JpaRepository<Course,Long> {
     Integer deleteLabour(Long courseId);
 
     Course findByIdAndIsActive(Long courseId, Boolean isActive);
+    @Query(value = "select id from course where course_code =:courseCode", nativeQuery = true)
+    Long findByCourseCode(String courseCode);
 }

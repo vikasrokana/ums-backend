@@ -2,12 +2,14 @@ package com.service;
 import com.Utility.AppUtils;
 import com.controller.FacultiesController;
 import com.exception.RecordNotFoundException;
-import com.model.Faculties;
-import com.model.Student;
-import com.model.StudentFees;
+import com.model.*;
 import com.payload.request.StudentFeeRequest;
 import com.payload.request.StudentRequest;
 import com.payload.response.StudentFeeResponse;
+import com.payload.response.StudentResponse;
+import com.repository.AssignSubjectRepository;
+import com.repository.CourseRepository;
+import com.repository.FacultiesRepository;
 import com.repository.StudentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,12 @@ import java.util.List;
 public class StudentServiceImpl implements StudentService{
     @Autowired
     StudentRepository studentRepository;
+    @Autowired
+    FacultiesRepository facultiesRepository;
+     @Autowired
+    CourseRepository courseRepository;
+    @Autowired
+    AssignSubjectRepository assignSubjectRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(StudentServiceImpl.class);
     @Override
@@ -52,7 +60,7 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
-    public List<Student> getStudentList(Long courseId, String semOrYear, String rollNumber) {
+    public List<Student> getStudentList(Long courseId, Long semOrYear, String rollNumber) {
         if (courseId != null && semOrYear != null && rollNumber != null) {
             return studentRepository.findByCourseIdAndSemOrYearAndRollNumber(courseId, semOrYear, rollNumber);
         } else if (courseId != null && semOrYear != null) {
@@ -82,6 +90,9 @@ public class StudentServiceImpl implements StudentService{
         }
         if (studentRequest.getProfilePic() != null) {
             student.setProfilePic(studentRequest.getProfilePic());
+        }
+        if(studentRequest.getEnrollmentNumber() != null){
+            student.setEnrollmentNumber(studentRequest.getEnrollmentNumber());
         }
         if (studentRequest.getAddress() != null) {
             student.setAddress(studentRequest.getAddress());
@@ -150,36 +161,75 @@ public class StudentServiceImpl implements StudentService{
         return studentFeeResponses;
     }
 
+    @Override
+    public List<StudentResponse> getStudentByFacultyId(Long userId) {
+        List<StudentResponse> studentResponses = new ArrayList<>();
+        try {
+            // Fetch faculty details
+            Faculties faculty = facultiesRepository.findByUserId(userId, true);
+            if (faculty == null) {
+                throw new IllegalArgumentException("Faculty not found for userId: " + userId);
+            }
+
+            // Fetch assigned subjects
+            List<AssignSubject> assignSubject = assignSubjectRepository.findByFacultyId(faculty.getId(), true);
+            if (assignSubject.isEmpty()) {
+                logger.warn("No assigned subjects found for facultyId: " + faculty.getId());
+            }
+
+            for (AssignSubject aSub : assignSubject) {
+                // Fetch courseId using courseCode
+                Long courseId = courseRepository.findByCourseCode(aSub.getCourseCode());
+                if (courseId == null) {
+                    logger.warn("Course ID not found for courseCode: " + aSub.getCourseCode());
+                    continue; // Skip this iteration if courseId is null
+                }
+
+                // Fetch student details
+                Student student = studentRepository.findByCourseIdAndSemOrYearAndSubject(courseId, aSub.getSemOrYear());
+                if (student == null) {
+                    logger.warn("No student found for courseId: " + courseId + ", semOrYear: " + aSub.getSemOrYear());
+                    continue; // Skip this iteration if student is null
+                }
+
+                // Map student to studentResponse
+                StudentResponse studentResponse = new StudentResponse();
+                studentResponse.setId(student.getId());
+                studentResponse.setCourseId(student.getCourseId());
+                studentResponse.setAddress(student.getAddress());
+                studentResponse.setDob(student.getDob());
+                studentResponse.setEmail(student.getEmail());
+                studentResponse.setEnrollmentNumber(student.getEnrollmentNumber());
+                studentResponse.setFatherName(student.getFatherName());
+                studentResponse.setFatherOccupation(student.getFatherOccupation());
+                studentResponse.setGender(student.getGender());
+                studentResponse.setMotherName(student.getMotherName());
+                studentResponse.setMotherOccupation(student.getMotherOccupation());
+                studentResponse.setOptionalSubject(student.getOptionalSubject());
+                studentResponse.setPhone(student.getPhone());
+                studentResponse.setPinCode(student.getPinCode());
+                studentResponse.setProfilePic(student.getProfilePic());
+                studentResponse.setRollNumber(student.getRollNumber());
+                studentResponse.setSemOrYear(student.getSemOrYear());
+                studentResponse.setStudentName(student.getStudentName());
+                studentResponse.setUserId(student.getUserId());
+
+                // Add to the response list
+                studentResponses.add(studentResponse);
+            }
+            logger.info("Successfully retrieved faculty student list for userId: " + userId);
+        } catch (Exception e) {
+            logger.error("Error while fetching student list for faculty with userId: " + userId, e);
+            throw e; // Re-throw the exception to notify the caller
+        }
+
+        return studentResponses;
+    }
+
+
 
     public Student findById(Long studentId) {
         return studentRepository.findById(studentId).orElseThrow(() -> new RuntimeException("Student not found"));
     }
-
-//    public Student updateStudent(Long studentId ,StudentRequest studentRequest) {
-//        Student student = findById(studentId);
-//        student.setFirstName(studentRequest.getFirstName());
-//        student.setLastName(studentRequest.getLastName());
-//        student.setEmail(studentRequest.getEmail());
-//        student.setPhone(studentRequest.getPhone());
-//        student.setDob(studentRequest.getDob());
-//        student.setGender(studentRequest.getGender());
-//        student.setState(studentRequest.getState());
-//        student.setCity(studentRequest.getCity());
-//        student.setRollNumber(studentRequest.getRollNumber());
-//        student.setOptionalSubject(studentRequest.getOptionalSubject());
-//        student.setProfilePic(studentRequest.getProfilePic());
-//        student.setAddress(studentRequest.getAddress());
-//        student.setPinCode(studentRequest.getPinCode());
-//        student.setFatherName(studentRequest.getFatherName());
-//        student.setFatherOccupation(studentRequest.getFatherOccupation());
-//        student.setMotherName(studentRequest.getMotherName());
-//        student.setMotherOccupation(studentRequest.getMotherOccupation());
-//        student.setAdmissionDate(studentRequest.getAdmissionDate());
-//        student.setCourseId(studentRequest.getCourseId());
-//        student.setSemOrYear(studentRequest.getSemOrYear());
-//        student.setActiveStatus(studentRequest.getActiveStatus());
-//        student.setUpdatedOn(new Timestamp(System.currentTimeMillis()));
-//        return studentRepository.save(student);
-//    }
 
 }
