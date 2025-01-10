@@ -1,10 +1,8 @@
 package com.controller;
 
 import com.Utility.AppUtils;
-import com.model.Course;
 import com.model.Announcement;
 import com.payload.request.AnnouncementRequest;
-import com.payload.response.CourseResponse;
 import com.payload.response.AnnouncementResponse;
 import com.payload.response.MessageResponse;
 import com.service.AnnouncementService;

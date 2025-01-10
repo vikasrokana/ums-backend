@@ -21,4 +21,5 @@ public interface FacultiesRepository extends JpaRepository<Faculties,Long> {
     Integer deleteFaculty(Long facultyId);
     @Query(value = "select * from faculties where user_id =:userId and is_active =:isActive",nativeQuery = true)
     Faculties findByUserId(Long userId,Boolean isActive);
+
 }

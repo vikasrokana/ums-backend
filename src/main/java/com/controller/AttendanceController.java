@@ -2,14 +2,9 @@ package com.controller;
 
 import com.Utility.AppUtils;
 import com.model.Attendance;
-import com.model.Course;
 import com.payload.request.AttendanceRequest;
-import com.payload.request.CourseRequest;
-import com.payload.response.FacultiesResponse;
-import com.payload.response.StudentResponse;
-import com.repository.AttendanceRepository;
+import com.payload.response.AttendanceResponse;
 import com.service.AttendanceService;
-import com.service.StudentService;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +45,20 @@ public class AttendanceController {
             return ResponseEntity.ok(attendance);
         }catch (Exception e){
             logger.error(e.getMessage(),e);
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "This API will be used to get student attendance list")
+    @RequestMapping(value = {"faculty/get-student-attendance-list"},method = RequestMethod.GET)
+    public ResponseEntity<?> getStudentAttendanceList(@RequestParam(value = "date",required = true) String date ,HttpServletRequest request) throws Exception {
+        try {
+            Long userId = appUtils.getUserId(request);
+            List<AttendanceResponse> attendanceResponseList = attendanceService.getStudentAttendance(date,userId);
+            return ResponseEntity.ok(attendanceResponseList);
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             throw new Exception(e.getMessage());
         }
     }

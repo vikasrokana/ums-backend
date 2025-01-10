@@ -1,10 +1,8 @@
 package com.controller;
 
 import com.Utility.AppUtils;
-import com.model.Course;
 import com.model.Event;
 import com.payload.request.EventRequest;
-import com.payload.response.CourseResponse;
 import com.payload.response.EventResponse;
 import com.payload.response.MessageResponse;
 import com.service.EventService;

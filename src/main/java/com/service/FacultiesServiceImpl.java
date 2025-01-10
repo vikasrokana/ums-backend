@@ -157,7 +157,7 @@ public class FacultiesServiceImpl implements FacultiesService{
 
     @Override
     public Faculties getFacultyDetails(Long userId) throws RecordNotFoundException {
-        Faculties faculties = facultiesRepository.findByIdAndIsActive(userId,true);
+        Faculties faculties = facultiesRepository.findByUserId(userId,true);
         if(null == faculties){
             throw new RecordNotFoundException("faculty details not found with id:: " + userId);
         }

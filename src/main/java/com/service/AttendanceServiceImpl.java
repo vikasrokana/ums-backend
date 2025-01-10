@@ -1,14 +1,18 @@
 package com.service;
 
 import com.Utility.AppUtils;
+import com.exception.RecordNotFoundException;
 import com.model.Attendance;
-import com.model.Course;
 import com.payload.request.AttendanceRequest;
+import com.payload.response.AttendanceResponse;
 import com.repository.AttendanceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class AttendanceServiceImpl implements AttendanceService{
@@ -62,6 +66,34 @@ public class AttendanceServiceImpl implements AttendanceService{
         Attendance savedAttendance = attendanceRepository.save(attendance);
         logger.info("Attendance record added/updated successfully for studentId: " + attendanceRequest.getStudentId());
         return savedAttendance;
+    }
+
+    @Override
+    public List<AttendanceResponse> getStudentAttendance(String date, Long userId) throws RecordNotFoundException {
+        List<AttendanceResponse> attendanceResponseList = new ArrayList<>();
+        List<Attendance> attendanceList = attendanceRepository.findByDateAndIsActive(date,userId,true);
+        if(attendanceList.isEmpty()){
+            throw new RecordNotFoundException("attendance list is not found");
+        }
+        for(Attendance attendance:attendanceList){
+            AttendanceResponse attendanceResponse = new AttendanceResponse();
+            attendanceResponse.setId(attendance.getId());
+            attendanceResponse.setCourseCode(attendance.getCourseCode());
+            attendanceResponse.setSubjectCode(attendance.getSubjectCode());
+            attendanceResponse.setSemOrYear(attendance.getSemOrYear());
+            attendanceResponse.setDate(attendance.getDate());
+            attendanceResponse.setTime(attendance.getTime());
+            attendanceResponse.setStudentId(attendance.getStudentId());
+            attendanceResponse.setPresent(attendance.getPresent());
+            attendanceResponse.setSection(attendance.getSection());
+            attendanceResponse.setCreatedOn(attendance.getCreatedOn());
+            attendanceResponse.setUpdatedOn(attendance.getUpdatedOn());
+            attendanceResponse.setCreatedBy(attendance.getCreatedBy());
+            attendanceResponse.setUpdateBy(attendance.getUpdateBy());
+            attendanceResponseList.add(attendanceResponse);
+        }
+        logger.info("get the student attendance list");
+        return attendanceResponseList;
     }
 
 }

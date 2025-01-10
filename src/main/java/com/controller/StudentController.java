@@ -1,7 +1,6 @@
 package com.controller;
 
 import com.Utility.AppUtils;
-import com.model.Faculties;
 import com.model.Student;
 import com.payload.request.StudentRequest;
 import com.payload.response.StudentFeeResponse;
