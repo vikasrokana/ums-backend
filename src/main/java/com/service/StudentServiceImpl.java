@@ -228,6 +228,40 @@ public class StudentServiceImpl implements StudentService {
         return studentResponses;
     }
 
+    @Override
+    public List<StudentResponse> getClassmateStudentList(Long userId) {
+        List<StudentResponse> studentResponses = new ArrayList<>();
+        Student self = studentRepository.findByUserIdAndIsActive(userId,true);
+        if(self == null){
+            throw new IllegalArgumentException("Active student not found for userId: " + userId);
+        }
+        List<Student> classmateList = studentRepository.findByCourseIdAndSemOrYearAndUserId(self.getCourseId(),self.getSemOrYear(),userId);
+        for(Student classmate: classmateList){
+            StudentResponse student = new StudentResponse();
+            student.setId(classmate.getId());
+            student.setCourseId(classmate.getCourseId());
+            student.setAddress(classmate.getAddress());
+            student.setDob(classmate.getDob());
+            student.setEmail(classmate.getEmail());
+            student.setEnrollmentNumber(classmate.getEnrollmentNumber());
+            student.setFatherName(classmate.getFatherName());
+            student.setFatherOccupation(classmate.getFatherOccupation());
+            student.setGender(classmate.getGender());
+            student.setMotherName(classmate.getMotherName());
+            student.setMotherOccupation(classmate.getMotherOccupation());
+            student.setOptionalSubject(classmate.getOptionalSubject());
+            student.setPhone(classmate.getPhone());
+            student.setPinCode(classmate.getPinCode());
+            student.setProfilePic(classmate.getProfilePic());
+            student.setRollNumber(classmate.getRollNumber());
+            student.setSemOrYear(classmate.getSemOrYear());
+            student.setStudentName(classmate.getStudentName());
+            student.setUserId(classmate.getUserId());
+            studentResponses.add(student);
+        }
+        return studentResponses;
+    }
+
 
     public Student findById(Long studentId) {
         return studentRepository.findById(studentId).orElseThrow(() -> new RuntimeException("Student not found"));

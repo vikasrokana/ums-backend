@@ -25,4 +25,6 @@ public interface StudentRepository extends JpaRepository<Student,Long> {
     List<StudentFees> findByIsActive(Boolean isActive);
     @Query(value = "SELECT * FROM student WHERE course_id =:courseId AND sem_or_year =:semOrYear", nativeQuery = true)
     List<Student> findByCourseIdAndSemOrYearAndSubject(Long courseId, Long semOrYear);
+    @Query(value = "SELECT * FROM student WHERE course_id =:courseId AND sem_or_year =:semOrYear and NOT user_id=:userId", nativeQuery = true)
+    List<Student> findByCourseIdAndSemOrYearAndUserId(Long courseId, Long semOrYear, Long userId);
 }

@@ -54,7 +54,7 @@ public class SubjectController {
     }
 
     @ApiOperation(value = "This API will be used to get subject list")
-    @RequestMapping(value = {"/admin/get-subject-list"},method = RequestMethod.GET)
+    @RequestMapping(value = {"/open/get-subject-list"},method = RequestMethod.GET)
     public ResponseEntity<?> getSubjectList(HttpServletRequest request) throws Exception {
         try {
             List<SubjectResponse> subjectResponseList = subjectService.getSubjectList();

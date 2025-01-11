@@ -108,4 +108,18 @@ public class StudentController {
             throw new Exception(e.getMessage());
         }
     }
+
+    @ApiOperation(value = "This API will be used to get the classmate student list")
+    @RequestMapping(value = {"student/get-classmate-students-list"}, method = RequestMethod.GET)
+    public ResponseEntity<?> getClassmateStudentsList(HttpServletRequest request) {
+
+        try {
+            Long userId = appUtils.getUserId(request);
+            List<StudentResponse> classmateStudentList = studentService.getClassmateStudentList(userId);
+            return ResponseEntity.ok(classmateStudentList);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return ResponseEntity.badRequest().body("Error fetching student classmate list");
+        }
+    }
 }

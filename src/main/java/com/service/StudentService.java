@@ -23,4 +23,6 @@ public interface StudentService {
     List<StudentFeeResponse> getStudentFeeList() throws RecordNotFoundException;
 
     List<StudentResponse> getStudentByFacultyId(Long userId);
+
+    List<StudentResponse> getClassmateStudentList(Long userId);
 }

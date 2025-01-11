@@ -55,7 +55,7 @@ public class CourseController {
     }
 
     @ApiOperation(value = "This API will be used to get course list")
-    @RequestMapping(value = {"/get-course-list"},method = RequestMethod.GET)
+    @RequestMapping(value = {"open/get-course-list"},method = RequestMethod.GET)
     public ResponseEntity<?> getCourseList(HttpServletRequest request) throws Exception {
         try {
             List<CourseResponse> courseResponseList = courseService.getCourseList();
