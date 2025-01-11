@@ -29,7 +29,7 @@ public class AttendanceController {
     public ResponseEntity<?> addStudentAttendance(@RequestBody AttendanceRequest attendanceRequest, HttpServletRequest request) throws Exception {
         try{
             Long userId = appUtils.getUserId(request);
-            Attendance attendance = attendanceService.addStudentAttendance(attendanceRequest,userId);
+           List< Attendance> attendance = attendanceService.addStudentAttendance(attendanceRequest,userId);
             return ResponseEntity.ok(attendance);
         }catch (Exception e){
             logger.error(e.getMessage(),e);
@@ -41,7 +41,7 @@ public class AttendanceController {
     public ResponseEntity<?> updateStudentAttendance(@RequestBody AttendanceRequest attendanceRequest, HttpServletRequest request) throws Exception {
         try{
             Long userId = appUtils.getUserId(request);
-            Attendance attendance = attendanceService.addStudentAttendance(attendanceRequest,userId);
+           List< Attendance> attendance = attendanceService.addStudentAttendance(attendanceRequest,userId);
             return ResponseEntity.ok(attendance);
         }catch (Exception e){
             logger.error(e.getMessage(),e);

@@ -9,7 +9,7 @@ import com.payload.response.AttendanceResponse;
 import java.util.List;
 
 public interface AttendanceService {
-    Attendance addStudentAttendance(AttendanceRequest attendanceRequest, Long userId);
+  List<Attendance> addStudentAttendance(AttendanceRequest attendanceRequest, Long userId);
 
     List<AttendanceResponse> getStudentAttendance(String date, Long userId) throws RecordNotFoundException;
 }

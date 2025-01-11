@@ -21,51 +21,55 @@ public class AttendanceServiceImpl implements AttendanceService{
     AttendanceRepository attendanceRepository;
     private static final Logger logger = LoggerFactory.getLogger(CourseServiceImpl.class);
     @Override
-    public Attendance addStudentAttendance(AttendanceRequest attendanceRequest, Long userId) {
-        Attendance attendance = new Attendance();
+    public List<Attendance> addStudentAttendance(AttendanceRequest attendanceRequest, Long userId) {
+        List<AttendanceRequest.Attendance> attendanceList = attendanceRequest.getAttendanceList();
+        List<Attendance> attendanceList1 = new ArrayList<>();
+        for(AttendanceRequest.Attendance attendance1: attendanceList) {
+            Attendance attendance = new Attendance();
+            // If the request has an ID, update the existing record
+            if (attendance1.getId() != null) {
+                attendance = attendanceRepository.findById(attendance1.getId()).orElseThrow(() ->
+                        new IllegalArgumentException("Attendance record not found for ID: " + attendance1.getId()));
+                attendance.setUpdatedOn(AppUtils.getCurrentIstTime());
+                attendance.setUpdateBy(userId);
+            } else {
+                // If no ID, create a new attendance record
+                attendance.setCreatedOn(AppUtils.getCurrentIstTime());
+                attendance.setCreatedBy(userId);
+            }
 
-        // If the request has an ID, update the existing record
-        if (attendanceRequest.getId() != null) {
-            attendance = attendanceRepository.findById(attendanceRequest.getId()).orElseThrow(() ->
-                    new IllegalArgumentException("Attendance record not found for ID: " + attendanceRequest.getId()));
-            attendance.setUpdatedOn(AppUtils.getCurrentIstTime());
-            attendance.setUpdateBy(userId);
-        } else {
-            // If no ID, create a new attendance record
-            attendance.setCreatedOn(AppUtils.getCurrentIstTime());
-            attendance.setCreatedBy(userId);
+            // Map fields from AttendanceRequest to Attendance entity
+            if (attendance1.getCourseCode() != null) {
+                attendance.setCourseCode(attendance1.getCourseCode());
+            }
+            if (attendance1.getSubjectCode() != null) {
+                attendance.setSubjectCode(attendance1.getSubjectCode());
+            }
+            if (attendance1.getDate() != null) {
+                attendance.setDate(attendance1.getDate());
+            }
+            if (attendance1.getTime() != null) {
+                attendance.setTime(attendance1.getTime());
+            }
+            if (attendance1.getStudentId() != null) {
+                attendance.setStudentId(attendance1.getStudentId());
+            }
+            if (attendance1.getSemOrYear() != null) {
+                attendance.setSemOrYear(attendance1.getSemOrYear());
+            }
+            if (attendance1.getPresent() != null) {
+                attendance.setPresent(attendance1.getPresent());
+            }
+            if (attendance1.getSection() != null) {
+                attendance.setSection(attendance1.getSection());
+            }
+            logger.info("Attendance record added/updated successfully for studentId: " + attendance1.getStudentId());
+            attendanceList1.add(attendance);
         }
-
-        // Map fields from AttendanceRequest to Attendance entity
-        if (attendanceRequest.getCourseCode() != null) {
-            attendance.setCourseCode(attendanceRequest.getCourseCode());
-        }
-        if (attendanceRequest.getSubjectCode() != null) {
-            attendance.setSubjectCode(attendanceRequest.getSubjectCode());
-        }
-        if (attendanceRequest.getDate() != null) {
-            attendance.setDate(attendanceRequest.getDate());
-        }
-        if (attendanceRequest.getTime() != null) {
-            attendance.setTime(attendanceRequest.getTime());
-        }
-        if (attendanceRequest.getStudentId() != null) {
-            attendance.setStudentId(attendanceRequest.getStudentId());
-        }
-        if (attendanceRequest.getSemOrYear() != null) {
-            attendance.setSemOrYear(attendanceRequest.getSemOrYear());
-        }
-        if (attendanceRequest.getPresent() != null) {
-            attendance.setPresent(attendanceRequest.getPresent());
-        }
-        if (attendanceRequest.getSection() != null) {
-            attendance.setSection(attendanceRequest.getSection());
-        }
-
         // Save attendance record to the repository
-        Attendance savedAttendance = attendanceRepository.save(attendance);
-        logger.info("Attendance record added/updated successfully for studentId: " + attendanceRequest.getStudentId());
-        return savedAttendance;
+        List< Attendance> savedAttendanceList = attendanceRepository.saveAll(attendanceList1);
+
+        return savedAttendanceList;
     }
 
     @Override

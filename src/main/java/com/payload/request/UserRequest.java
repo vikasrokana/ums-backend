@@ -12,5 +12,6 @@ public class UserRequest {
     private String password;
     private String role;
     private Long courseId;
-    private String courseCode;;
+    private String courseCode;
+    private Long semOrYear;
 }

@@ -60,6 +60,7 @@ public class UserServiceImpl implements UserService{
             student.setEnrollmentNumber(AppUtils.generateEnrollmentNumber(userRequest.getCourseCode()));
             student.setEmail(user1.getEmail());
             student.setCourseId(userRequest.getCourseId());
+            student.setSemOrYear(userRequest.getSemOrYear());
             student.setCreatedOn(AppUtils.getCurrentIstTime());
             studentRepository.save(student);
         } else if ("faculty".equalsIgnoreCase(userRequest.getRole())) {

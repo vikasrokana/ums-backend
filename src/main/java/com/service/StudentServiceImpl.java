@@ -1,4 +1,5 @@
 package com.service;
+
 import com.Utility.AppUtils;
 import com.controller.FacultiesController;
 import com.exception.RecordNotFoundException;
@@ -22,17 +23,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class StudentServiceImpl implements StudentService{
+public class StudentServiceImpl implements StudentService {
     @Autowired
     StudentRepository studentRepository;
     @Autowired
     FacultiesRepository facultiesRepository;
-     @Autowired
+    @Autowired
     CourseRepository courseRepository;
     @Autowired
     AssignSubjectRepository assignSubjectRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(StudentServiceImpl.class);
+
     @Override
     public Student registerStudent(StudentRequest studentRequest) {
 
@@ -72,7 +74,7 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     public Student StudentDetails(StudentRequest studentRequest, Long userId) {
-        Student student =studentRepository.findByIdAndIsActive(studentRequest.getId(),true);
+        Student student = studentRepository.findByIdAndIsActive(studentRequest.getId(), true);
         if (studentRequest.getStudentName() != null) {
             student.setStudentName(studentRequest.getStudentName());
         }
@@ -91,7 +93,7 @@ public class StudentServiceImpl implements StudentService{
         if (studentRequest.getProfilePic() != null) {
             student.setProfilePic(studentRequest.getProfilePic());
         }
-        if(studentRequest.getEnrollmentNumber() != null){
+        if (studentRequest.getEnrollmentNumber() != null) {
             student.setEnrollmentNumber(studentRequest.getEnrollmentNumber());
         }
         if (studentRequest.getAddress() != null) {
@@ -125,11 +127,11 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     public Student findStudentDetails(Long userId) throws RecordNotFoundException {
-        Student student = studentRepository.findByIdAndIsActive(userId,true);
-        if(null == student){
-            throw new RecordNotFoundException("faculty details not found with id:: " + userId);
+        Student student = studentRepository.findByUserIdAndIsActive(userId, true);
+        if (null == student) {
+            throw new RecordNotFoundException("student details not found with id:: " + userId);
         }
-        logger.info("Get faculty detail");
+        logger.info("Get student detail");
         return student;
     }
 
@@ -137,10 +139,10 @@ public class StudentServiceImpl implements StudentService{
     public List<StudentFeeResponse> getStudentFeeList() throws RecordNotFoundException {
         List<StudentFeeResponse> studentFeeResponses = new ArrayList<>();
         List<StudentFees> studentFeesList = studentRepository.findByIsActive(true);
-        if(studentFeesList.isEmpty()){
+        if (studentFeesList.isEmpty()) {
             throw new RecordNotFoundException("student list is not found");
         }
-        for(StudentFees fees: studentFeesList){
+        for (StudentFees fees : studentFeesList) {
             StudentFeeResponse studentFeeResponse = new StudentFeeResponse();
             studentFeeResponse.setId(fees.getId());
             studentFeeResponse.setStudentId(fees.getStudentId());
@@ -186,36 +188,36 @@ public class StudentServiceImpl implements StudentService{
                 }
 
                 // Fetch student details
-                Student student = studentRepository.findByCourseIdAndSemOrYearAndSubject(courseId, aSub.getSemOrYear());
-                if (student == null) {
+                List<Student> studentList = studentRepository.findByCourseIdAndSemOrYearAndSubject(courseId, aSub.getSemOrYear());
+                if (studentList.isEmpty()) {
                     logger.warn("No student found for courseId: " + courseId + ", semOrYear: " + aSub.getSemOrYear());
                     continue; // Skip this iteration if student is null
                 }
-
-                // Map student to studentResponse
-                StudentResponse studentResponse = new StudentResponse();
-                studentResponse.setId(student.getId());
-                studentResponse.setCourseId(student.getCourseId());
-                studentResponse.setAddress(student.getAddress());
-                studentResponse.setDob(student.getDob());
-                studentResponse.setEmail(student.getEmail());
-                studentResponse.setEnrollmentNumber(student.getEnrollmentNumber());
-                studentResponse.setFatherName(student.getFatherName());
-                studentResponse.setFatherOccupation(student.getFatherOccupation());
-                studentResponse.setGender(student.getGender());
-                studentResponse.setMotherName(student.getMotherName());
-                studentResponse.setMotherOccupation(student.getMotherOccupation());
-                studentResponse.setOptionalSubject(student.getOptionalSubject());
-                studentResponse.setPhone(student.getPhone());
-                studentResponse.setPinCode(student.getPinCode());
-                studentResponse.setProfilePic(student.getProfilePic());
-                studentResponse.setRollNumber(student.getRollNumber());
-                studentResponse.setSemOrYear(student.getSemOrYear());
-                studentResponse.setStudentName(student.getStudentName());
-                studentResponse.setUserId(student.getUserId());
-
-                // Add to the response list
-                studentResponses.add(studentResponse);
+                for (Student student : studentList) {
+                    // Map student to studentResponse
+                    StudentResponse studentResponse = new StudentResponse();
+                    studentResponse.setId(student.getId());
+                    studentResponse.setCourseId(student.getCourseId());
+                    studentResponse.setAddress(student.getAddress());
+                    studentResponse.setDob(student.getDob());
+                    studentResponse.setEmail(student.getEmail());
+                    studentResponse.setEnrollmentNumber(student.getEnrollmentNumber());
+                    studentResponse.setFatherName(student.getFatherName());
+                    studentResponse.setFatherOccupation(student.getFatherOccupation());
+                    studentResponse.setGender(student.getGender());
+                    studentResponse.setMotherName(student.getMotherName());
+                    studentResponse.setMotherOccupation(student.getMotherOccupation());
+                    studentResponse.setOptionalSubject(student.getOptionalSubject());
+                    studentResponse.setPhone(student.getPhone());
+                    studentResponse.setPinCode(student.getPinCode());
+                    studentResponse.setProfilePic(student.getProfilePic());
+                    studentResponse.setRollNumber(student.getRollNumber());
+                    studentResponse.setSemOrYear(student.getSemOrYear());
+                    studentResponse.setStudentName(student.getStudentName());
+                    studentResponse.setUserId(student.getUserId());
+                    // Add to the response list
+                    studentResponses.add(studentResponse);
+                }
             }
             logger.info("Successfully retrieved faculty student list for userId: " + userId);
         } catch (Exception e) {
@@ -225,7 +227,6 @@ public class StudentServiceImpl implements StudentService{
 
         return studentResponses;
     }
-
 
 
     public Student findById(Long studentId) {
