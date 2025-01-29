@@ -1,17 +1,22 @@
 package com.dao;
 
 import com.Utility.ConnectionUtilities;
+import com.model.AssignSubject;
+import com.model.Faculties;
+import com.model.Student;
 import com.payload.response.AssignSubjectResponse;
+import com.payload.response.FacultiesResponse;
+import com.payload.response.FacultySubjectResponse;
+import com.repository.AssignSubjectRepository;
+import com.repository.FacultiesRepository;
+import com.repository.StudentRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 @Repository
@@ -20,6 +25,14 @@ public class AssignSubjectDaoImpl implements AssignSubjectDao{
     @Autowired
     @Qualifier("dataSource")
     private DataSource dataSource;
+
+    @Autowired
+    StudentRepository studentRepository;
+    @Autowired
+    FacultiesRepository facultiesRepository;
+
+    @Autowired
+    AssignSubjectRepository assignSubjectRepository;
     @Override
     public List<AssignSubjectResponse> getAssignFacultiesList() throws Exception {
         Connection con = null;
@@ -39,6 +52,7 @@ public class AssignSubjectDaoImpl implements AssignSubjectDao{
                 AssignSubjectResponse assignSubjectResponse = new AssignSubjectResponse();
                 assignSubjectResponse.setFacultyId(rs.getLong("faculty_id"));
                 assignSubjectResponse.setCourseCode(rs.getString("course_code"));
+                assignSubjectResponse.setCourseId(rs.getLong("course_id"));
                 assignSubjectResponse.setSubjectCode(rs.getString("subject_code"));
                 assignSubjectResponse.setSemOrYear(rs.getString("sem_or_year"));
                 assignSubjectResponse.setPosition(rs.getString("position"));
@@ -62,4 +76,75 @@ public class AssignSubjectDaoImpl implements AssignSubjectDao{
         }
         return assignSubjectResponseList;
     }
+
+    @Override
+    public List<FacultySubjectResponse> getAssignFacultiesListToStudent(Long userId) throws SQLException {
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null; // Use PreparedStatement for SQL queries
+        List<FacultySubjectResponse> facultySubjectResponseList = new ArrayList<>();
+        String sql = "";
+
+        // Retrieve the student details
+        Student student = studentRepository.findByUserIdAndIsActive(userId, true);
+        if (student == null) {
+            throw new IllegalArgumentException("Student not found for the given userId.");
+        }
+
+        // Retrieve the assigned subjects
+        List<AssignSubject> assignSubjectList = assignSubjectRepository.findByCourseAndSem(student.getCourseId(), student.getSemOrYear(), true);
+        for (AssignSubject assignSubject : assignSubjectList) {
+            // Retrieve the faculty details
+            Faculties facultiesList = facultiesRepository.findByIdAndIsActive(assignSubject.getFacultyId(), true);
+            if (facultiesList != null) {
+                try {
+                    // Establish database connection
+                    con = dataSource.getConnection();
+                    sql = "SELECT c.course_name, s.sem_or_year, s.subject_name " +
+                            "FROM course AS c " +
+                            "INNER JOIN subject AS s ON c.id = s.course_id " +
+                            "WHERE s.course_id = ? AND s.sem_or_year = ? AND s.subject_code = ? AND c.is_active = ?";
+
+                    // Use PreparedStatement for parameterized queries
+                    pstmt = con.prepareStatement(sql);
+                    pstmt.setLong(1, assignSubject.getCourseId());
+                    pstmt.setLong(2, assignSubject.getSemOrYear());
+                    pstmt.setString(3, assignSubject.getSubjectCode());
+                    pstmt.setBoolean(4, true); // Adjust based on database boolean representation
+
+                    // Execute the query
+                    rs = pstmt.executeQuery();
+                    while (rs.next()) {
+                        FacultySubjectResponse facRes = new FacultySubjectResponse();
+                        facRes.setId(facultiesList.getId());
+                        facRes.setFacultyName(facultiesList.getFacultyName());
+                        facRes.setEmail(facultiesList.getEmail());
+                        facRes.setPhone(facultiesList.getPhone());
+                        facRes.setQualification(facultiesList.getQualification());
+                        facRes.setExperience(facultiesList.getExperience());
+                        facRes.setDob(facultiesList.getDob());
+                        facRes.setGender(facultiesList.getGender());
+                        facRes.setProfilePic(facultiesList.getProfilePic());
+                        facRes.setJoinDate(facultiesList.getJoinDate());
+                        facRes.setAddress(facultiesList.getAddress());
+                        facRes.setPinCode(facultiesList.getPinCode());
+                        facRes.setCourseName(rs.getString("course_name"));
+                        facRes.setSemOrYear(rs.getLong("sem_or_year"));
+                        facRes.setPosition(assignSubject.getPosition());
+                        facRes.setSubjectName(rs.getString("subject_name"));
+                        facultySubjectResponseList.add(facRes);
+                    }
+                } catch (SQLException e) {
+                    throw new SQLException("Error while fetching data: " + e.getMessage(), e);
+                } finally {
+                    // Ensure resources are properly closed
+                    if (rs != null) rs.close();
+                    if (pstmt != null) pstmt.close();
+                    if (con != null) con.close();
+                }
+            }
+        }
+        return facultySubjectResponseList;
+    }
+
 }

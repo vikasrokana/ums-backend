@@ -21,4 +21,5 @@ public interface FacultiesService {
     AssignSubject assignSubject(AssignSubjectRequest assignSubjectRequest,Long userId);
 
     Faculties getFacultyDetails(Long userId) throws RecordNotFoundException;
+
 }

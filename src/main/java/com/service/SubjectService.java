@@ -18,4 +18,6 @@ public interface SubjectService {
     Subject getSubjectById(Long subjectId) throws RecordNotFoundException;
 
     List<SubjectResponse> getSubjectByCourseId(Long courseId);
+
+    List<SubjectResponse> getAssignedSubjectOfStudent(Long userId);
 }

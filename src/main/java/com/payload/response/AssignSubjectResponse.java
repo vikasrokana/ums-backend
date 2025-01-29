@@ -6,6 +6,7 @@ import lombok.Data;
 public class AssignSubjectResponse {
     private String courseCode;
     private String semOrYear;
+    private Long CourseId;
     private String subjectCode;
     private Long facultyId;
     private String position;

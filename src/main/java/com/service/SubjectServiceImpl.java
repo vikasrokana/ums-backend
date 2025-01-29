@@ -3,9 +3,11 @@ package com.service;
 import com.Utility.AppUtils;
 import com.controller.SubjectController;
 import com.exception.RecordNotFoundException;
+import com.model.Student;
 import com.model.Subject;
 import com.payload.request.SubjectRequest;
 import com.payload.response.SubjectResponse;
+import com.repository.StudentRepository;
 import com.repository.SubjectRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,9 @@ public class SubjectServiceImpl implements SubjectService{
 
     @Autowired
     SubjectRepository subjectRepository;
+
+    @Autowired
+    StudentRepository studentRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(SubjectController.class);
     @Override
@@ -149,6 +154,33 @@ public class SubjectServiceImpl implements SubjectService{
            subjectResponseList.add(subjectResponse);
        }
         logger.info("Get subject using course Id");
+        return subjectResponseList;
+    }
+
+    @Override
+    public List<SubjectResponse> getAssignedSubjectOfStudent(Long userId) {
+        Student student = studentRepository.findByUserIdAndIsActive(userId,true);
+        List<SubjectResponse> subjectResponseList = new ArrayList<>();
+        List<Subject> subjectList = subjectRepository.findByCourseIdAndSem(student.getCourseId(),student.getSemOrYear(), true);
+        for(Subject subject: subjectList){
+            SubjectResponse subjectResponse = new SubjectResponse();
+            subjectResponse.setId(subject.getId());
+            subjectResponse.setCourseId(subject.getCourseId());
+            subjectResponse.setSubjectName(subject.getSubjectName());
+            subjectResponse.setSubjectCode(subject.getSubjectCode());
+            subjectResponse.setSemOrYear(subject.getSemOrYear());
+            subjectResponse.setSubjectType(subject.getSubjectType());
+            subjectResponse.setTheoryMarks(subject.getTheoryMarks());
+            subjectResponse.setPracticalMarks(subject.getPracticalMarks());
+            subjectResponse.setDescription(subject.getDescription());
+            subjectResponse.setStatus(subject.getStatus());
+            subjectResponse.setSyllabus(subject.getSyllabus());
+            subjectResponse.setCreatedOn(subject.getCreatedOn());
+            subjectResponse.setUpdatedOn(subject.getUpdatedOn());
+            subjectResponse.setIsActive(subject.getIsActive());
+            subjectResponseList.add(subjectResponse);
+        }
+        logger.info("get subject using course id and subject id");
         return subjectResponseList;
     }
 

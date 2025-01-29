@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Service
 public class FacultiesServiceImpl implements FacultiesService{
     @Autowired
@@ -137,6 +138,9 @@ public class FacultiesServiceImpl implements FacultiesService{
         }
         if(assignSubjectRequest.getSubjectCode() !=null){
             assignSubject.setSubjectCode(assignSubjectRequest.getSubjectCode());
+        }
+        if(assignSubjectRequest.getCourseId() !=null){
+            assignSubject.setCourseId(assignSubjectRequest.getCourseId());
         }
         if(assignSubjectRequest.getCourseCode()!=null){
             assignSubject.setCourseCode(assignSubjectRequest.getCourseCode());

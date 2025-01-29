@@ -49,12 +49,29 @@ public class AttendanceController {
         }
     }
 
-    @ApiOperation(value = "This API will be used to get student attendance list")
+    @ApiOperation(value = "This API will be used to get student attendance list for faculty")
     @RequestMapping(value = {"faculty/get-student-attendance-list"},method = RequestMethod.GET)
     public ResponseEntity<?> getStudentAttendanceList(@RequestParam(value = "date",required = true) String date ,HttpServletRequest request) throws Exception {
         try {
             Long userId = appUtils.getUserId(request);
             List<AttendanceResponse> attendanceResponseList = attendanceService.getStudentAttendance(date,userId);
+            return ResponseEntity.ok(attendanceResponseList);
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    //working on it
+    @ApiOperation(value = "This API will be used to get student attendance list for student")
+    @RequestMapping(value = {"student/get-student-own-attendance-list"},method = RequestMethod.GET)
+    public ResponseEntity<?> getStudentOwnAttendanceList(@RequestParam(value = "pageNumber", required = false) Integer pageNumber,
+            @RequestParam(value = "date",required = false) String date ,
+                                                         HttpServletRequest request) throws Exception {
+        try {
+            Long userId = appUtils.getUserId(request);
+            List<AttendanceResponse> attendanceResponseList = attendanceService.getStudentOwnAttendance(pageNumber,date,userId);
             return ResponseEntity.ok(attendanceResponseList);
 
         } catch (Exception e) {

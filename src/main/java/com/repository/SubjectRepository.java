@@ -20,4 +20,6 @@ public interface SubjectRepository extends JpaRepository<Subject, Long> {
     Subject findByIdAndIsActive(Long subjectId,Boolean isActive);
     @Query(value = "Select * from subject where course_id =:courseId and is_active =:isActive",nativeQuery = true)
     List<Subject> findByCourseId(Long courseId, Boolean isActive);
+    @Query(value = "Select * from subject where course_id =:courseId and is_active =:isActive And sem_or_year=:semOrYear",nativeQuery = true)
+    List<Subject> findByCourseIdAndSem(Long courseId, Long semOrYear, Boolean isActive);
 }

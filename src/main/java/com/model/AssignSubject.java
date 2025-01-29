@@ -12,6 +12,7 @@ public class AssignSubject {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long courseId;
     private String courseCode;
     private Long semOrYear;
     private String subjectCode;

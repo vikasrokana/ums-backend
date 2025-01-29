@@ -3,12 +3,17 @@ package com.service;
 import com.Utility.AppUtils;
 import com.exception.RecordNotFoundException;
 import com.model.Attendance;
+import com.model.Faculties;
+import com.model.Student;
 import com.payload.request.AttendanceRequest;
 import com.payload.response.AttendanceResponse;
 import com.repository.AttendanceRepository;
+import com.repository.FacultiesRepository;
+import com.repository.StudentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,6 +24,11 @@ public class AttendanceServiceImpl implements AttendanceService{
 
     @Autowired
     AttendanceRepository attendanceRepository;
+    @Autowired
+    FacultiesRepository facultiesRepository;
+
+    @Autowired
+    StudentRepository studentRepository;
     private static final Logger logger = LoggerFactory.getLogger(CourseServiceImpl.class);
     @Override
     public List<Attendance> addStudentAttendance(AttendanceRequest attendanceRequest, Long userId) {
@@ -75,7 +85,44 @@ public class AttendanceServiceImpl implements AttendanceService{
     @Override
     public List<AttendanceResponse> getStudentAttendance(String date, Long userId) throws RecordNotFoundException {
         List<AttendanceResponse> attendanceResponseList = new ArrayList<>();
+
         List<Attendance> attendanceList = attendanceRepository.findByDateAndIsActive(date,userId,true);
+        if(attendanceList.isEmpty()){
+            throw new RecordNotFoundException("attendance list is not found");
+        }
+        for(Attendance attendance:attendanceList){
+            AttendanceResponse attendanceResponse = new AttendanceResponse();
+            attendanceResponse.setId(attendance.getId());
+            attendanceResponse.setCourseCode(attendance.getCourseCode());
+            attendanceResponse.setSubjectCode(attendance.getSubjectCode());
+            attendanceResponse.setSemOrYear(attendance.getSemOrYear());
+            attendanceResponse.setDate(attendance.getDate());
+            attendanceResponse.setTime(attendance.getTime());
+            attendanceResponse.setStudentId(attendance.getStudentId());
+            attendanceResponse.setPresent(attendance.getPresent());
+            attendanceResponse.setSection(attendance.getSection());
+            attendanceResponse.setCreatedOn(attendance.getCreatedOn());
+            attendanceResponse.setUpdatedOn(attendance.getUpdatedOn());
+            attendanceResponse.setCreatedBy(attendance.getCreatedBy());
+            attendanceResponse.setUpdateBy(attendance.getUpdateBy());
+            attendanceResponseList.add(attendanceResponse);
+        }
+        logger.info("get the student attendance list");
+        return attendanceResponseList;
+    }
+
+    @Override
+    public List<AttendanceResponse> getStudentOwnAttendance(Integer pageNumber, String date, Long userId) throws RecordNotFoundException {
+        Pageable pageable = AppUtils.getPageRange(pageNumber);
+        List<AttendanceResponse> attendanceResponseList = new ArrayList<>();
+        Student student = studentRepository.findByUserIdAndIsActive(userId,true);
+        List<Attendance> attendanceList;
+        if(date!= null){
+        attendanceList = attendanceRepository.findByDateAndStudentId(date,student.getId(), true,pageable);}
+        else{
+            attendanceList = attendanceRepository.findByStudentIdAndIsActive(student.getId(),true, pageable);
+        }
+
         if(attendanceList.isEmpty()){
             throw new RecordNotFoundException("attendance list is not found");
         }

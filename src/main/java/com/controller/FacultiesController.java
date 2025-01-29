@@ -8,6 +8,7 @@ import com.payload.request.AssignSubjectRequest;
 import com.payload.request.FacultiesRequest;
 import com.payload.response.AssignSubjectResponse;
 import com.payload.response.FacultiesResponse;
+import com.payload.response.FacultySubjectResponse;
 import com.payload.response.MessageResponse;
 import com.service.FacultiesService;
 import io.swagger.annotations.ApiOperation;
@@ -96,14 +97,13 @@ public class FacultiesController {
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             throw new Exception(e.getMessage());
-        }
+        } 
     }
 
     @ApiOperation(value = "This API Will be used to assign subject to faculty")
     @RequestMapping(value = {"/admin/assign-subject"},method = RequestMethod.POST)
     public ResponseEntity<?> assignSubject(@RequestBody AssignSubjectRequest assignSubjectRequest, HttpServletRequest request) throws Exception {
         try{
-//            Long userId= appUtils.getUserId(request);
             Long userId= appUtils.getUserId(request);
             AssignSubject assignSubject = facultiesService.assignSubject(assignSubjectRequest, userId);
             return ResponseEntity.ok(assignSubject);
@@ -139,4 +139,19 @@ public class FacultiesController {
             throw new Exception(e.getMessage());
         }
     }
+
+    @ApiOperation(value = "This API will be used to get assign faculty list to the student")
+    @RequestMapping(value = {"/student/get-assign-faculty-to-student"},method = RequestMethod.GET)
+    public ResponseEntity<?> getAssignFacultyListToStudent(HttpServletRequest request) throws Exception {
+        try {
+            Long userId=appUtils.getUserId(request);
+            List<FacultySubjectResponse> facultySubjectResponseList = assignSubjectDao.getAssignFacultiesListToStudent(userId);
+            return ResponseEntity.ok(facultySubjectResponseList);
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new Exception(e.getMessage());
+        }
+    }
+
 }

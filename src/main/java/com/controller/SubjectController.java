@@ -106,4 +106,17 @@ public class SubjectController {
         }
     }
 
+    @ApiOperation(value = "This API will be used to get Assigned Subject to Student")
+    @RequestMapping(value = {"/student/get-assigned-subject-student"}, method = RequestMethod.GET)
+    public ResponseEntity<?> getAssignedSubjectToStudent(HttpServletRequest request) throws Exception {
+        try {
+            Long userId = appUtils.getUserId(request);
+            List<SubjectResponse> subjectResponseList = subjectService.getAssignedSubjectOfStudent(userId);
+            return ResponseEntity.ok(subjectResponseList);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new Exception(e.getMessage());
+        }
+    }
+
 }

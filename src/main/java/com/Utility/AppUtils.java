@@ -6,6 +6,8 @@ import com.security.TokenProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -74,5 +76,15 @@ public class AppUtils {
             return role;
         }
         return null;
+    }
+    public static Pageable getPageRange(Integer pageNumber) {
+        if (null == pageNumber || pageNumber == -1 || pageNumber == 0) {
+            Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE);
+            return pageable;
+        }
+        Integer itemPerPage = 10;
+        Integer page = pageNumber - 1;
+        Pageable pageable = PageRequest.of(page, itemPerPage);
+        return pageable;
     }
 }
