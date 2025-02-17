@@ -54,7 +54,8 @@ public class AttendanceController {
     public ResponseEntity<?> getStudentAttendanceList(@RequestParam(value = "date",required = true) String date ,HttpServletRequest request) throws Exception {
         try {
             Long userId = appUtils.getUserId(request);
-            List<AttendanceResponse> attendanceResponseList = attendanceService.getStudentAttendance(date,userId);
+            String  role = appUtils.getCurrentUserRole(request);
+            List<AttendanceResponse> attendanceResponseList = attendanceService.getStudentAttendance(date,userId,role);
             return ResponseEntity.ok(attendanceResponseList);
 
         } catch (Exception e) {

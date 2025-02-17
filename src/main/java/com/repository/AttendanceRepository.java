@@ -16,4 +16,6 @@ public interface AttendanceRepository extends JpaRepository<Attendance,Long> {
     List<Attendance> findByDateAndStudentId(String date, Long id, Boolean isActive, Pageable pageable);
     @Query(value = "select * from attendance where student_id=:id and is_active =:isActive", nativeQuery = true)
     List<Attendance> findByStudentIdAndIsActive(Long id, Boolean isActive, Pageable pageable);
+    @Query(value = "select * from attendance where date=:date and is_active=:isActive", nativeQuery = true)
+    List<Attendance> findForAdminByDateAndIsActive(String date, Boolean isActive);
 }

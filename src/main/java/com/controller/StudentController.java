@@ -5,6 +5,8 @@ import com.model.Student;
 import com.payload.request.StudentRequest;
 import com.payload.response.StudentFeeResponse;
 import com.payload.response.StudentResponse;
+import com.repository.FeeRepository;
+import com.service.StudentFeesService;
 import com.service.StudentService;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -26,6 +28,8 @@ public class StudentController {
     AppUtils appUtils;
     @Autowired
     StudentService studentService;
+    @Autowired
+    StudentFeesService studentFeesService;
 
     @ApiOperation(value = "This API will be used for student update student details")
     @RequestMapping(value = {"student/update-student-details"}, method = RequestMethod.POST)
@@ -88,7 +92,7 @@ public class StudentController {
     public ResponseEntity<?> getStudentsFeeList(HttpServletRequest request) {
 
         try {
-            List<StudentFeeResponse> studentFeesList = studentService.getStudentFeeList();
+            List<StudentFeeResponse> studentFeesList = studentFeesService.findFeeList();
             return ResponseEntity.ok(studentFeesList);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

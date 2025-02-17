@@ -56,8 +56,8 @@ public class EventServiceImpl implements EventService {
         if (eventRequest.getAudience() != null) {
             event.setAudience(eventRequest.getAudience());
         }
-        if (eventRequest.isRegistrationRequired()) {
-            event.setRegistrationRequired(eventRequest.isRegistrationRequired());
+        if (eventRequest.getRegistrationRequired() !=null) {
+            event.setRegistrationRequired(eventRequest.getRegistrationRequired());
         }
         if (eventRequest.getRegistrationDeadline() != null) {
             event.setRegistrationDeadline(eventRequest.getRegistrationDeadline());
@@ -96,7 +96,7 @@ public class EventServiceImpl implements EventService {
             eventResponse.setLocation(event.getLocation());
             eventResponse.setDescription(event.getDescription());
             eventResponse.setAudience(event.getAudience());
-            eventResponse.setRegistrationRequired(event.isRegistrationRequired());
+            eventResponse.setRegistrationRequired(event.getRegistrationRequired());
             eventResponse.setRegistrationDeadline(event.getRegistrationDeadline());
             eventResponse.setRegistrationLink(event.getRegistrationLink());
             eventResponse.setAuthorName(event.getAuthorName());
