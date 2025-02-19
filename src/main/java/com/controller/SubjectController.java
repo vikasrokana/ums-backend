@@ -55,9 +55,9 @@ public class SubjectController {
 
     @ApiOperation(value = "This API will be used to get subject list")
     @RequestMapping(value = {"/open/get-subject-list"},method = RequestMethod.GET)
-    public ResponseEntity<?> getSubjectList(HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> getSubjectList(@RequestParam(value = "pageNumber",required = false)Integer pageNumber, HttpServletRequest request) throws Exception {
         try {
-            List<SubjectResponse> subjectResponseList = subjectService.getSubjectList();
+            List<SubjectResponse> subjectResponseList = subjectService.getSubjectList(pageNumber);
             return ResponseEntity.ok(subjectResponseList);
 
         } catch (Exception e) {
@@ -108,10 +108,10 @@ public class SubjectController {
 
     @ApiOperation(value = "This API will be used to get Assigned Subject to Student")
     @RequestMapping(value = {"/student/get-assigned-subject-student"}, method = RequestMethod.GET)
-    public ResponseEntity<?> getAssignedSubjectToStudent(HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> getAssignedSubjectToStudent(@RequestParam(value = "pageNumber",required = false)Integer pageNumber, HttpServletRequest request) throws Exception {
         try {
             Long userId = appUtils.getUserId(request);
-            List<SubjectResponse> subjectResponseList = subjectService.getAssignedSubjectOfStudent(userId);
+            List<SubjectResponse> subjectResponseList = subjectService.getAssignedSubjectOfStudent(userId,pageNumber);
             return ResponseEntity.ok(subjectResponseList);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

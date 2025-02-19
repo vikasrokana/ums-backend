@@ -9,6 +9,7 @@ import com.repository.AnnouncementRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -48,17 +49,18 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         if (announcementRequest.getCreatedBy() != null) {
             announcement.setCreatedBy(announcementRequest.getCreatedBy());
         }
-
         Announcement announcement1 = announcementRepository.save(announcement);
         logger.info("announcement added successfully");
         return announcement1;
     }
     @Override
-    public List<AnnouncementResponse> getAnnouncementList() throws RecordNotFoundException {
+    public List<AnnouncementResponse> getAnnouncementList(Integer pageNumber) throws RecordNotFoundException {
+        Pageable pageable = AppUtils.getPageRange(pageNumber);
         List<AnnouncementResponse> announcementResponseList = new ArrayList<>();
-        List<Announcement> announcementList = announcementRepository.findByIsActive(true);
+        List<Announcement> announcementList = announcementRepository.findByIsActive(true, pageable);
         if(announcementList.isEmpty()){
-            throw new RecordNotFoundException("announcement list is not found");
+            logger.warn("No announcement records");
+            return new ArrayList<>();
         }
         for(Announcement announcement: announcementList){
             AnnouncementResponse announcementResponse = new AnnouncementResponse();

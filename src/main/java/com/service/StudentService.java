@@ -13,7 +13,7 @@ public interface StudentService {
     Student registerStudent(StudentRequest studentRequest);
     Student findById(Long StudentId);
 
-    List<Student> getStudentList(Long courseId, Long semOrYear, String rollNumber);
+    List<Student> getStudentList(Long courseId, Long semOrYear, String rollNumber, Integer pageNumber);
 
     Student StudentDetails(StudentRequest studentRequest,Long userId);
 
@@ -22,7 +22,7 @@ public interface StudentService {
 
     List<StudentFeeResponse> getStudentFeeList() throws RecordNotFoundException;
 
-    List<StudentResponse> getStudentByFacultyId(Long userId);
+    List<StudentResponse> getStudentByFacultyId(Long userId, Integer pageNumber);
 
-    List<StudentResponse> getClassmateStudentList(Long userId);
+    List<StudentResponse> getClassmateStudentList(Long userId, Integer pageNumber);
 }

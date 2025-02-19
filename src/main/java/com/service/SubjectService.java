@@ -3,7 +3,6 @@ package com.service;
 import com.exception.RecordNotFoundException;
 import com.model.Subject;
 import com.payload.request.SubjectRequest;
-import com.payload.response.CourseResponse;
 import com.payload.response.SubjectResponse;
 
 import java.util.List;
@@ -11,7 +10,7 @@ import java.util.List;
 public interface SubjectService {
     Subject addSubject(SubjectRequest subjectRequest,Long userId);
 
-    List<SubjectResponse> getSubjectList() throws RecordNotFoundException;
+    List<SubjectResponse> getSubjectList(Integer pageNumber) throws RecordNotFoundException;
 
     Boolean deleteSubject(Long subjectId);
 
@@ -19,5 +18,5 @@ public interface SubjectService {
 
     List<SubjectResponse> getSubjectByCourseId(Long courseId);
 
-    List<SubjectResponse> getAssignedSubjectOfStudent(Long userId);
+    List<SubjectResponse> getAssignedSubjectOfStudent(Long userId, Integer pageNumber);
 }

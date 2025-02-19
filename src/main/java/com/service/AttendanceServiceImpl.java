@@ -3,7 +3,6 @@ package com.service;
 import com.Utility.AppUtils;
 import com.exception.RecordNotFoundException;
 import com.model.Attendance;
-import com.model.Faculties;
 import com.model.Student;
 import com.payload.request.AttendanceRequest;
 import com.payload.response.AttendanceResponse;
@@ -59,9 +58,9 @@ public class AttendanceServiceImpl implements AttendanceService{
             if (attendance1.getDate() != null) {
                 attendance.setDate(attendance1.getDate());
             }
-            if (attendance1.getTime() != null) {
-                attendance.setTime(attendance1.getTime());
-            }
+//            if (attendance1.getTime() != null) {
+//                attendance.setTime(attendance1.getTime());
+//            }
             if (attendance1.getStudentId() != null) {
                 attendance.setStudentId(attendance1.getStudentId());
             }
@@ -84,14 +83,14 @@ public class AttendanceServiceImpl implements AttendanceService{
     }
 
     @Override
-    public List<AttendanceResponse> getStudentAttendance(String date, Long userId, String role) throws RecordNotFoundException {
+    public List<AttendanceResponse> getStudentAttendance(String date, Long userId, String role, Integer pageNumber) throws RecordNotFoundException {
         List<Attendance> attendanceList;
-
+        Pageable pageable = AppUtils.getPageRange(pageNumber);
         // Ensure correct string comparison
         if ("admin".equals(role)) {
-            attendanceList = attendanceRepository.findForAdminByDateAndIsActive(date, true);
+            attendanceList = attendanceRepository.findForAdminByDateAndIsActive(date, true, pageable);
         } else {
-            attendanceList = attendanceRepository.findByDateAndIsActive(date, userId, true);
+            attendanceList = attendanceRepository.findByDateAndIsActive(date, userId, true,pageable);
         }
 
         // Return an empty list instead of throwing an exception
@@ -137,7 +136,8 @@ public class AttendanceServiceImpl implements AttendanceService{
         }
 
         if(attendanceList.isEmpty()){
-            throw new RecordNotFoundException("attendance list is not found");
+            logger.warn("No attendance records found for date: {}", date);
+            return new ArrayList<>();
         }
         for(Attendance attendance:attendanceList){
             AttendanceResponse attendanceResponse = new AttendanceResponse();

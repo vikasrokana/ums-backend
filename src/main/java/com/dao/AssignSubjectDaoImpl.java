@@ -1,5 +1,6 @@
 package com.dao;
 
+import com.Utility.AppUtils;
 import com.Utility.ConnectionUtilities;
 import com.model.AssignSubject;
 import com.model.Faculties;
@@ -10,9 +11,11 @@ import com.payload.response.FacultySubjectResponse;
 import com.repository.AssignSubjectRepository;
 import com.repository.FacultiesRepository;
 import com.repository.StudentRepository;
+import io.swagger.models.auth.In;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -34,7 +37,12 @@ public class AssignSubjectDaoImpl implements AssignSubjectDao{
     @Autowired
     AssignSubjectRepository assignSubjectRepository;
     @Override
-    public List<AssignSubjectResponse> getAssignFacultiesList() throws Exception {
+    public List<AssignSubjectResponse> getAssignFacultiesList(Integer pageNumber) throws Exception {
+        Integer pageSize = 10; // Define the page size (adjust as needed)
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1; // Default to the first page
+        }
+        Integer offset = (pageNumber - 1) * pageSize; // Calculate offset
         Connection con = null;
         ResultSet rs = null;
         Statement st = null;
@@ -45,7 +53,8 @@ public class AssignSubjectDaoImpl implements AssignSubjectDao{
             st = con.createStatement();
             sql = "SELECT a.*, c.*, f.* FROM ums.course AS c " +
                     "JOIN assign_subject AS a ON c.course_code = a.course_code " +
-                    "JOIN faculties AS f ON f.id = a.faculty_id";
+                    "JOIN faculties AS f ON f.id = a.faculty_id " +
+                    "LIMIT " + pageSize + " OFFSET " + offset; // Applying pagination
             rs = st.executeQuery(sql);
             logger.info("Executing Query: " + sql);
             while (rs.next()) {
@@ -78,7 +87,12 @@ public class AssignSubjectDaoImpl implements AssignSubjectDao{
     }
 
     @Override
-    public List<FacultySubjectResponse> getAssignFacultiesListToStudent(Long userId) throws SQLException {
+    public List<FacultySubjectResponse> getAssignFacultiesListToStudent(Long userId, Integer pageNumber) throws SQLException {
+        Integer pageSize = 10; // Define the page size (adjust as needed)
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1; // Default to the first page
+        }
+        Integer offset = (pageNumber - 1) * pageSize; // Calculate offset
         Connection con = null;
         ResultSet rs = null;
         PreparedStatement pstmt = null; // Use PreparedStatement for SQL queries
@@ -103,7 +117,8 @@ public class AssignSubjectDaoImpl implements AssignSubjectDao{
                     sql = "SELECT c.course_name, s.sem_or_year, s.subject_name " +
                             "FROM course AS c " +
                             "INNER JOIN subject AS s ON c.id = s.course_id " +
-                            "WHERE s.course_id = ? AND s.sem_or_year = ? AND s.subject_code = ? AND c.is_active = ?";
+                            "WHERE s.course_id = ? AND s.sem_or_year = ? AND s.subject_code = ? AND c.is_active = ?" +
+                            "LIMIT " + pageSize + " OFFSET " + offset;
 
                     // Use PreparedStatement for parameterized queries
                     pstmt = con.prepareStatement(sql);

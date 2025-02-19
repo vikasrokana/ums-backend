@@ -49,9 +49,9 @@ public class FacultiesController {
 
     @ApiOperation(value = "This API will be used to get faculties list")
     @RequestMapping(value = {"/admin/get-faculties-list"},method = RequestMethod.GET)
-    public ResponseEntity<?> getFacultiesList(HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> getFacultiesList(@RequestParam(value = "pageNumber", required = false)Integer pageNumber, HttpServletRequest request) throws Exception {
         try {
-            List<FacultiesResponse> facultiesResponseList = facultiesService.getFacultiesList();
+            List<FacultiesResponse> facultiesResponseList = facultiesService.getFacultiesList(pageNumber);
             return ResponseEntity.ok(facultiesResponseList);
 
         } catch (Exception e) {
@@ -129,9 +129,9 @@ public class FacultiesController {
 
     @ApiOperation(value = "This API will be used to get assign subject list")
     @RequestMapping(value = {"/faculty/get-assign-subject-list"},method = RequestMethod.GET)
-    public ResponseEntity<?> getAssignSubjectList(HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> getAssignSubjectList(@RequestParam(value = "pageNumber", required = false)Integer pageNumber, HttpServletRequest request) throws Exception {
         try {
-            List<AssignSubjectResponse> assignSubjectResponses = assignSubjectDao.getAssignFacultiesList();
+            List<AssignSubjectResponse> assignSubjectResponses = assignSubjectDao.getAssignFacultiesList(pageNumber);
             return ResponseEntity.ok(assignSubjectResponses);
 
         } catch (Exception e) {
@@ -142,10 +142,10 @@ public class FacultiesController {
 
     @ApiOperation(value = "This API will be used to get assign faculty list to the student")
     @RequestMapping(value = {"/student/get-assign-faculty-to-student"},method = RequestMethod.GET)
-    public ResponseEntity<?> getAssignFacultyListToStudent(HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> getAssignFacultyListToStudent(@RequestParam(value = "pageNumber",required = false)Integer pageNumber,HttpServletRequest request) throws Exception {
         try {
             Long userId=appUtils.getUserId(request);
-            List<FacultySubjectResponse> facultySubjectResponseList = assignSubjectDao.getAssignFacultiesListToStudent(userId);
+            List<FacultySubjectResponse> facultySubjectResponseList = assignSubjectDao.getAssignFacultiesListToStudent(userId, pageNumber);
             return ResponseEntity.ok(facultySubjectResponseList);
 
         } catch (Exception e) {

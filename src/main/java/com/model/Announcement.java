@@ -16,12 +16,10 @@ public class Announcement {
     private String title;
     private String description;
     private String audience;
-    private LocalDate date;
+    private String date;
     private String priority;
     private String createdBy;
-
     private Timestamp createdOn;
     private Timestamp updatedOn;
-
     private Boolean isActive = true;
 }

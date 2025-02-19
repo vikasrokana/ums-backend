@@ -5,7 +5,6 @@ import com.model.Student;
 import com.payload.request.StudentRequest;
 import com.payload.response.StudentFeeResponse;
 import com.payload.response.StudentResponse;
-import com.repository.FeeRepository;
 import com.service.StudentFeesService;
 import com.service.StudentService;
 import io.swagger.annotations.ApiOperation;
@@ -76,10 +75,11 @@ public class StudentController {
             @RequestParam(required = false) Long courseId,
             @RequestParam(required = false) Long semOrYear,
             @RequestParam(required = false) String rollNumber,
+            @RequestParam(required = false) Integer pageNumber,
             HttpServletRequest request) {
 
         try {
-            List<Student> students = studentService.getStudentList(courseId, semOrYear, rollNumber);
+            List<Student> students = studentService.getStudentList(courseId, semOrYear, rollNumber, pageNumber);
             return ResponseEntity.ok(students);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -102,10 +102,10 @@ public class StudentController {
 
     @ApiOperation(value = "This API will be used to get student assign to a course")
     @RequestMapping(value = {"/faculty/get-student-by-faculty-id"}, method = RequestMethod.GET)
-    public ResponseEntity<?> getStudentByFacultyId(HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> getStudentByFacultyId(@RequestParam(value = "pageNumber", required = false) Integer pageNumber, HttpServletRequest request) throws Exception {
         try {
             Long userId = appUtils.getUserId(request);
-            List<StudentResponse> student = studentService.getStudentByFacultyId(userId);
+            List<StudentResponse> student = studentService.getStudentByFacultyId(userId, pageNumber);
             return ResponseEntity.ok(student);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -115,11 +115,11 @@ public class StudentController {
 
     @ApiOperation(value = "This API will be used to get the classmate student list")
     @RequestMapping(value = {"student/get-classmate-students-list"}, method = RequestMethod.GET)
-    public ResponseEntity<?> getClassmateStudentsList(HttpServletRequest request) {
+    public ResponseEntity<?> getClassmateStudentsList(@RequestParam(value = "pageNumber", required = false) Integer pageNumber, HttpServletRequest request) {
 
         try {
             Long userId = appUtils.getUserId(request);
-            List<StudentResponse> classmateStudentList = studentService.getClassmateStudentList(userId);
+            List<StudentResponse> classmateStudentList = studentService.getClassmateStudentList(userId, pageNumber);
             return ResponseEntity.ok(classmateStudentList);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

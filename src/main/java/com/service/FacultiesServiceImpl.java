@@ -12,6 +12,7 @@ import com.repository.FacultiesRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -77,11 +78,14 @@ public class FacultiesServiceImpl implements FacultiesService{
     }
 
     @Override
-    public List<FacultiesResponse> getFacultiesList() throws RecordNotFoundException {
+    public List<FacultiesResponse> getFacultiesList(Integer pageNumber) throws RecordNotFoundException {
         List<FacultiesResponse> facultiesResponseList = new ArrayList<>();
-        List<Faculties> facultiesList = facultiesRepository.findByIsActive(true);
+        Pageable pageable = AppUtils.getPageRange(pageNumber);
+        List<Faculties> facultiesList = facultiesRepository.findByIsActive(true, pageable);
         if(facultiesList.isEmpty()){
-            throw new RecordNotFoundException("faculties list is not found");
+//            throw new RecordNotFoundException("faculties list is not found");
+            logger.warn("faculties list is not found");
+            return new ArrayList<>();
         }
         for(Faculties faculties: facultiesList){
             FacultiesResponse facultiesResponse = new FacultiesResponse();

@@ -9,6 +9,7 @@ import com.repository.EventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,7 +27,6 @@ public class EventServiceImpl implements EventService {
             event = eventRepository.findById(eventRequest.getId()).get();
             event.setUpdatedOn(AppUtils.getCurrentIstTime());
             event.setUpdatedBy(userId);
-
         }
         else{
             event.setCreatedOn(AppUtils.getCurrentIstTime());
@@ -79,11 +79,14 @@ public class EventServiceImpl implements EventService {
         return event1;
     }
     @Override
-    public List<EventResponse> getEventList() throws RecordNotFoundException {
+    public List<EventResponse> getEventList(Integer pageNumber) throws RecordNotFoundException {
         List<EventResponse> eventResponseList = new ArrayList<>();
-        List<Event> eventList = eventRepository.findByIsActive(true);
+        Pageable pageable = AppUtils.getPageRange(pageNumber);
+        List<Event> eventList = eventRepository.findByIsActive(true, pageable);
         if(eventList.isEmpty()){
-            throw new RecordNotFoundException("event list is not found");
+//            throw new RecordNotFoundException("event list is not found");
+            logger.warn("event list is not found");
+            return new ArrayList<>();
         }
         for(Event event: eventList){
             EventResponse eventResponse = new EventResponse();

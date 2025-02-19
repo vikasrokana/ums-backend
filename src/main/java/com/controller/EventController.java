@@ -58,9 +58,9 @@ public class EventController {
 
     @ApiOperation(value = "This api will be used to get the event list")
     @RequestMapping(value = {"/admin/get-event-list"}, method = RequestMethod.GET)
-    public ResponseEntity<?>  getEventList() throws Exception{
+    public ResponseEntity<?>  getEventList(@RequestParam(value = "pageNumber", required = false) Integer pageNumber) throws Exception{
         try{
-            List<EventResponse>  eventResponseList = eventService.getEventList();
+            List<EventResponse>  eventResponseList = eventService.getEventList(pageNumber);
             return ResponseEntity.ok(eventResponseList);
         }
         catch (Exception e){

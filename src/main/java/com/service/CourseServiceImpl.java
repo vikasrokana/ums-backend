@@ -9,6 +9,7 @@ import com.repository.CourseRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,7 +27,6 @@ public class CourseServiceImpl implements CourseService{
             course = courseRepository.findById(courseRequest.getId()).get();
             course.setUpdatedOn(AppUtils.getCurrentIstTime());
             course.setUpdatedBy(userId);
-
             }
         else{
             course.setCreatedOn(AppUtils.getCurrentIstTime());
@@ -59,11 +59,14 @@ public class CourseServiceImpl implements CourseService{
     }
 
     @Override
-    public List<CourseResponse> getCourseList() throws RecordNotFoundException {
+    public List<CourseResponse> getCourseList( Integer pageNumber) throws RecordNotFoundException {
+        Pageable pageable = AppUtils.getPageRange(pageNumber);
         List<CourseResponse> courseResponseList = new ArrayList<>();
-        List<Course> courseList = courseRepository.findByIsActive(true);
+        List<Course> courseList = courseRepository.findByIsActive(true, pageable);
         if(courseList.isEmpty()){
-            throw new RecordNotFoundException("course list is not found");
+//            throw new RecordNotFoundException("course list is not found");
+            logger.warn("course list is not found");
+            return new ArrayList<>();
         }
         for(Course course: courseList){
             CourseResponse courseResponse= new CourseResponse();

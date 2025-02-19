@@ -15,6 +15,7 @@ import com.repository.StudentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -62,11 +63,12 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Student> getStudentList(Long courseId, Long semOrYear, String rollNumber) {
+    public List<Student> getStudentList(Long courseId, Long semOrYear, String rollNumber, Integer pageNumber) {
+        Pageable pageable = AppUtils.getPageRange(pageNumber);
         if (courseId != null && semOrYear != null && rollNumber != null) {
-            return studentRepository.findByCourseIdAndSemOrYearAndRollNumber(courseId, semOrYear, rollNumber);
+            return studentRepository.findByCourseIdAndSemOrYearAndRollNumber(courseId, semOrYear, rollNumber,pageable);
         } else if (courseId != null && semOrYear != null) {
-            return studentRepository.findByCourseIdAndSemOrYear(courseId, semOrYear);
+            return studentRepository.findByCourseIdAndSemOrYear(courseId, semOrYear, pageable);
         } else {
             return studentRepository.findAll();
         }
@@ -164,8 +166,9 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<StudentResponse> getStudentByFacultyId(Long userId) {
+    public List<StudentResponse> getStudentByFacultyId(Long userId, Integer pageNumber) {
         List<StudentResponse> studentResponses = new ArrayList<>();
+        Pageable pageable = AppUtils.getPageRange(pageNumber);
         try {
             // Fetch faculty details
             Faculties faculty = facultiesRepository.findByUserId(userId, true);
@@ -174,7 +177,7 @@ public class StudentServiceImpl implements StudentService {
             }
 
             // Fetch assigned subjects
-            List<AssignSubject> assignSubject = assignSubjectRepository.findByFacultyId(faculty.getId(), true);
+            List<AssignSubject> assignSubject = assignSubjectRepository.findByFacultyId(faculty.getId(), true, pageable);
             if (assignSubject.isEmpty()) {
                 logger.warn("No assigned subjects found for facultyId: " + faculty.getId());
             }
@@ -188,7 +191,7 @@ public class StudentServiceImpl implements StudentService {
                 }
 
                 // Fetch student details
-                List<Student> studentList = studentRepository.findByCourseIdAndSemOrYearAndSubject(courseId, aSub.getSemOrYear());
+                List<Student> studentList = studentRepository.findByCourseIdAndSemOrYearAndSubject(courseId, aSub.getSemOrYear(), pageable);
                 if (studentList.isEmpty()) {
                     logger.warn("No student found for courseId: " + courseId + ", semOrYear: " + aSub.getSemOrYear());
                     continue; // Skip this iteration if student is null
@@ -229,13 +232,14 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<StudentResponse> getClassmateStudentList(Long userId) {
+    public List<StudentResponse> getClassmateStudentList(Long userId, Integer pageNumber) {
+        Pageable pageable = AppUtils.getPageRange(pageNumber);
         List<StudentResponse> studentResponses = new ArrayList<>();
         Student self = studentRepository.findByUserIdAndIsActive(userId,true);
         if(self == null){
             throw new IllegalArgumentException("Active student not found for userId: " + userId);
         }
-        List<Student> classmateList = studentRepository.findByCourseIdAndSemOrYearAndUserId(self.getCourseId(),self.getSemOrYear(),userId);
+        List<Student> classmateList = studentRepository.findByCourseIdAndSemOrYearAndUserId(self.getCourseId(),self.getSemOrYear(),userId,pageable);
         for(Student classmate: classmateList){
             StudentResponse student = new StudentResponse();
             student.setId(classmate.getId());

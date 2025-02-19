@@ -12,6 +12,7 @@ import com.repository.SubjectRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -83,11 +84,14 @@ public class SubjectServiceImpl implements SubjectService{
     }
 
     @Override
-    public List<SubjectResponse> getSubjectList() throws RecordNotFoundException {
+    public List<SubjectResponse> getSubjectList(Integer pageNumber) throws RecordNotFoundException {
+        Pageable pageable = AppUtils.getPageRange(pageNumber);
         List<SubjectResponse> subjectResponseList = new ArrayList<>();
-        List<Subject> subjectList = subjectRepository.findByIsActive(true);
+        List<Subject> subjectList = subjectRepository.findByIsActive(pageable,true);
         if(subjectList.isEmpty()){
-            throw new RecordNotFoundException("subject list is not found");
+//            throw new RecordNotFoundException("subject list is not found");
+            logger.warn("subject list is not found");
+            return new ArrayList<>();
         }
         for(Subject subject: subjectList){
             SubjectResponse subjectResponse = new SubjectResponse();
@@ -158,11 +162,25 @@ public class SubjectServiceImpl implements SubjectService{
     }
 
     @Override
-    public List<SubjectResponse> getAssignedSubjectOfStudent(Long userId) {
-        Student student = studentRepository.findByUserIdAndIsActive(userId,true);
+    public List<SubjectResponse> getAssignedSubjectOfStudent(Long userId, Integer pageNumber) {
+        Pageable pageable = AppUtils.getPageRange(pageNumber);
+
+        // Fetch student from repository
+        Student student = studentRepository.findByUserIdAndIsActive(userId, true);
+
+        // Check if student exists
+        if (student == null) {
+            logger.warn("Student not found for userId: " + userId);
+            return new ArrayList<>(); // Return an empty list to avoid NullPointerException
+        }
+
         List<SubjectResponse> subjectResponseList = new ArrayList<>();
-        List<Subject> subjectList = subjectRepository.findByCourseIdAndSem(student.getCourseId(),student.getSemOrYear(), true);
-        for(Subject subject: subjectList){
+
+        // Fetch subjects based on courseId and semester/year
+        List<Subject> subjectList = subjectRepository.findByCourseIdAndSem(student.getCourseId(), student.getSemOrYear(), true, pageable);
+
+        // Convert Subject entity to SubjectResponse DTO
+        for (Subject subject : subjectList) {
             SubjectResponse subjectResponse = new SubjectResponse();
             subjectResponse.setId(subject.getId());
             subjectResponse.setCourseId(subject.getCourseId());
@@ -178,11 +196,14 @@ public class SubjectServiceImpl implements SubjectService{
             subjectResponse.setCreatedOn(subject.getCreatedOn());
             subjectResponse.setUpdatedOn(subject.getUpdatedOn());
             subjectResponse.setIsActive(subject.getIsActive());
+
             subjectResponseList.add(subjectResponse);
         }
-        logger.info("get subject using course id and subject id");
+
+        logger.info("Subjects retrieved successfully for userId: " + userId);
         return subjectResponseList;
     }
+
 
 
 }

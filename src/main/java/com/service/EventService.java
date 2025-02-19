@@ -10,7 +10,7 @@ import java.util.List;
 public interface EventService {
 
     Event addEvent(EventRequest eventRequest,Long userId);
-    List<EventResponse> getEventList() throws RecordNotFoundException;
+    List<EventResponse> getEventList(Integer pageNumber) throws RecordNotFoundException;
     Boolean deleteEvent(Long eventId);
 
 }

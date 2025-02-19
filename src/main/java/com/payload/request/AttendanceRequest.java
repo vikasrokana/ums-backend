@@ -13,7 +13,7 @@ public class AttendanceRequest {
         private String courseCode;
         private String subjectCode;
         private String date;
-        private String time;
+//        private String time;
         private Long studentId;
         private Long semOrYear;
         private Boolean present;
@@ -24,7 +24,7 @@ public class AttendanceRequest {
             this.courseCode = courseCode;
             this.subjectCode = subjectCode;
             this.date = date;
-            this.time = time;
+//            this.time = time;
             this.studentId = studentId;
             this.semOrYear = semOrYear;
             this.present = present;

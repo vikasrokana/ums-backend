@@ -10,7 +10,7 @@ import java.util.List;
 public interface AnnouncementService {
 
     Announcement addAnnouncement(AnnouncementRequest announcementRequest,Long userId);
-    List<AnnouncementResponse> getAnnouncementList() throws RecordNotFoundException;
+    List<AnnouncementResponse> getAnnouncementList(Integer pageNumber) throws RecordNotFoundException;
     Boolean deleteAnnouncement(Long announcementId);
 
 }

@@ -10,7 +10,7 @@ import java.util.List;
 public interface CourseService {
     Course addCourse(CourseRequest courseRequest,Long userId);
 
-    List<CourseResponse> getCourseList() throws RecordNotFoundException;
+    List<CourseResponse> getCourseList(Integer pageNumber) throws RecordNotFoundException;
 
     Boolean deleteCourse(Long courseId);
 

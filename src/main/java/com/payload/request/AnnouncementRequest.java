@@ -11,6 +11,6 @@ public class AnnouncementRequest{
     private String description;
     private String audience;
     private String createdBy;
-    private LocalDate date;
+    private String  date;
     private String priority;
 }

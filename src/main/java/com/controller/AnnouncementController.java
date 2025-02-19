@@ -56,9 +56,9 @@ public class AnnouncementController {
 
     @ApiOperation(value = "This api will be used to get the announcement list")
     @RequestMapping(value = {"/admin/get-announcement-list"}, method = RequestMethod.GET)
-    public ResponseEntity<?>  getAnnouncementList() throws Exception{
+    public ResponseEntity<?>  getAnnouncementList(@RequestParam(value = "pageNumber", required = false) Integer pageNumber) throws Exception{
         try{
-            List<AnnouncementResponse>  announcementResponseList = announcementService.getAnnouncementList();
+            List<AnnouncementResponse>  announcementResponseList = announcementService.getAnnouncementList(pageNumber);
             return ResponseEntity.ok(announcementResponseList);
         }
         catch (Exception e){
