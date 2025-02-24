@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface AssignSubjectDao {
 
-    List<AssignSubjectResponse> getAssignFacultiesList(Integer pageNumber) throws Exception;
+    List<AssignSubjectResponse> getAssignFacultiesList(Long userId, String role, Integer pageNumber) throws Exception;
 
     List<FacultySubjectResponse> getAssignFacultiesListToStudent(Long userId, Integer pageNumber) throws SQLException;
 }

@@ -4,6 +4,7 @@ import com.Utility.AppUtils;
 import com.dao.AssignSubjectDao;
 import com.model.AssignSubject;
 import com.model.Faculties;
+import com.model.User;
 import com.payload.request.AssignSubjectRequest;
 import com.payload.request.FacultiesRequest;
 import com.payload.response.AssignSubjectResponse;
@@ -131,7 +132,9 @@ public class FacultiesController {
     @RequestMapping(value = {"/faculty/get-assign-subject-list"},method = RequestMethod.GET)
     public ResponseEntity<?> getAssignSubjectList(@RequestParam(value = "pageNumber", required = false)Integer pageNumber, HttpServletRequest request) throws Exception {
         try {
-            List<AssignSubjectResponse> assignSubjectResponses = assignSubjectDao.getAssignFacultiesList(pageNumber);
+            Long userId = appUtils.getUserId(request);
+            String role = appUtils.getCurrentUserRole(request);
+            List<AssignSubjectResponse> assignSubjectResponses = assignSubjectDao.getAssignFacultiesList(userId, role,pageNumber);
             return ResponseEntity.ok(assignSubjectResponses);
 
         } catch (Exception e) {

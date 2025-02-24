@@ -42,6 +42,9 @@ public class FacultiesServiceImpl implements FacultiesService{
         if(null != facultiesRequest.getFacultyName()) {
             faculties.setFacultyName(facultiesRequest.getFacultyName());
         }
+        if(null != facultiesRequest.getPosition()){
+            faculties.setPosition(facultiesRequest.getPosition());
+        }
         if(null != facultiesRequest.getEmail()) {
             faculties.setEmail(facultiesRequest.getEmail());
         }
@@ -91,6 +94,7 @@ public class FacultiesServiceImpl implements FacultiesService{
             FacultiesResponse facultiesResponse = new FacultiesResponse();
             facultiesResponse.setId(faculties.getId());
             facultiesResponse.setFacultyName(faculties.getFacultyName());
+            facultiesResponse.setPosition(faculties.getPosition());
             facultiesResponse.setEmail(faculties.getEmail());
             facultiesResponse.setPhone(faculties.getPhone());
             facultiesResponse.setQualification(faculties.getQualification());
@@ -140,23 +144,14 @@ public class FacultiesServiceImpl implements FacultiesService{
             assignSubject.setCreatedOn(AppUtils.getCurrentIstTime());
             assignSubject.setCreatedBy(userId);
         }
-        if(assignSubjectRequest.getSubjectCode() !=null){
-            assignSubject.setSubjectCode(assignSubjectRequest.getSubjectCode());
-        }
         if(assignSubjectRequest.getCourseId() !=null){
             assignSubject.setCourseId(assignSubjectRequest.getCourseId());
         }
-        if(assignSubjectRequest.getCourseCode()!=null){
-            assignSubject.setCourseCode(assignSubjectRequest.getCourseCode());
+        if(assignSubjectRequest.getSubjectId() != null){
+            assignSubject.setSubjectId(assignSubjectRequest.getSubjectId());
         }
-        if(assignSubjectRequest.getSemOrYear()!=null){
-            assignSubject.setSemOrYear(assignSubjectRequest.getSemOrYear());
-        }
-        if(assignSubjectRequest.getFacultyId()!=null){
+        if(assignSubjectRequest.getFacultyId() != null){
             assignSubject.setFacultyId(assignSubjectRequest.getFacultyId());
-        }
-        if(assignSubjectRequest.getPosition()!=null){
-            assignSubject.setPosition(assignSubjectRequest.getPosition());
         }
         assignSubject.setDate(AppUtils.currentDate());
         AssignSubject assignSubject1 = assignSubjectRepository.save(assignSubject);

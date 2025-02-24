@@ -8,6 +8,7 @@ public class FacultiesRequest {
     private String email;
     private String phone;
     private String qualification;
+    private String position;
     private String experience;
     private String dob;
     private String gender;

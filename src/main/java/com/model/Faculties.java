@@ -17,6 +17,7 @@ public class Faculties {
     private String phone;
     private String qualification;
     private String experience;
+    private String position;
     private String dob;
     private String gender;
     private String profilePic;

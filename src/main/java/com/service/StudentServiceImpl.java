@@ -8,10 +8,7 @@ import com.payload.request.StudentFeeRequest;
 import com.payload.request.StudentRequest;
 import com.payload.response.StudentFeeResponse;
 import com.payload.response.StudentResponse;
-import com.repository.AssignSubjectRepository;
-import com.repository.CourseRepository;
-import com.repository.FacultiesRepository;
-import com.repository.StudentRepository;
+import com.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +28,8 @@ public class StudentServiceImpl implements StudentService {
     FacultiesRepository facultiesRepository;
     @Autowired
     CourseRepository courseRepository;
+    @Autowired
+    SubjectRepository subjectRepository;
     @Autowired
     AssignSubjectRepository assignSubjectRepository;
 
@@ -65,13 +64,14 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<Student> getStudentList(Long courseId, Long semOrYear, String rollNumber, Integer pageNumber) {
         Pageable pageable = AppUtils.getPageRange(pageNumber);
-        if (courseId != null && semOrYear != null && rollNumber != null) {
-            return studentRepository.findByCourseIdAndSemOrYearAndRollNumber(courseId, semOrYear, rollNumber,pageable);
-        } else if (courseId != null && semOrYear != null) {
-            return studentRepository.findByCourseIdAndSemOrYear(courseId, semOrYear, pageable);
-        } else {
-            return studentRepository.findAll();
-        }
+        return studentRepository.findByCourseIdAndSemOrYearAndRollNumber(courseId, semOrYear, rollNumber,pageable);
+//        if (courseId != null && semOrYear != null && rollNumber != null) {
+//            return studentRepository.findByCourseIdAndSemOrYearAndRollNumber(courseId, semOrYear, rollNumber,pageable);
+//        } else if (courseId != null && semOrYear != null) {
+//            return studentRepository.findByCourseIdAndSemOrYear(courseId, semOrYear, pageable);
+//        } else {
+//            return studentRepository.findAll();
+//        }
     }
 
     @Override
@@ -184,16 +184,19 @@ public class StudentServiceImpl implements StudentService {
 
             for (AssignSubject aSub : assignSubject) {
                 // Fetch courseId using courseCode
-                Long courseId = courseRepository.findByCourseCode(aSub.getCourseCode());
-                if (courseId == null) {
-                    logger.warn("Course ID not found for courseCode: " + aSub.getCourseCode());
-                    continue; // Skip this iteration if courseId is null
-                }
+
+                // find sem or Year from subject and then place in below code
+                Subject subject = subjectRepository.findByIdAndIsActive(aSub.getSubjectId(),true);
+//                Long courseId = courseRepository.findByCourseCode(aSub.getCourseCode());
+//                if (courseId == null) {
+//                    logger.warn("Course ID not found for courseCode: " + aSub.getCourseCode());
+//                    continue; // Skip this iteration if courseId is null
+//                }
 
                 // Fetch student details
-                List<Student> studentList = studentRepository.findByCourseIdAndSemOrYearAndSubject(courseId, aSub.getSemOrYear(), pageable);
+                List<Student> studentList = studentRepository.findByCourseIdAndSemOrYearAndSubject(subject.getCourseId(), subject.getSemOrYear(), pageable);
                 if (studentList.isEmpty()) {
-                    logger.warn("No student found for courseId: " + courseId + ", semOrYear: " + aSub.getSemOrYear());
+                    logger.warn("No student found for courseId: " + subject.getCourseId() + ", semOrYear: " + subject.getSemOrYear());
                     continue; // Skip this iteration if student is null
                 }
                 for (Student student : studentList) {

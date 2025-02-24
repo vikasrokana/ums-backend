@@ -14,6 +14,6 @@ public interface AssignSubjectRepository extends JpaRepository<AssignSubject, Lo
     AssignSubject findByIdAndIsActive(Long id, Boolean isActive);
     @Query(value = "select * from assign_subject where faculty_id=:facultyId and is_active =:isActive",nativeQuery = true)
     List<AssignSubject> findByFacultyId(Long facultyId, Boolean isActive, Pageable pageable);
-    @Query(value = "select * from assign_subject where course_id=:courseId and sem_or_year=:semOrYear and is_active =:isActive",nativeQuery = true)
-    List<AssignSubject> findByCourseAndSem(Long courseId, Long semOrYear, Boolean isActive);
+    @Query(value = "select * from assign_subject where course_id=:courseId and is_active =:isActive",nativeQuery = true)
+    List<AssignSubject> findByCourseAndSem(Long courseId, Boolean isActive);
 }
