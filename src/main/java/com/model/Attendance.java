@@ -12,8 +12,8 @@ public class Attendance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String courseCode;
-    private String subjectCode;
+    private Long courseId;
+    private Long subjectId;
     private Long semOrYear;
     private String date;
     private String time;

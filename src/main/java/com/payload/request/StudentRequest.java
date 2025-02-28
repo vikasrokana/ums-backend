@@ -9,9 +9,11 @@ import java.time.LocalDate;
 public class StudentRequest {
     private Long id;
     private Long courseId;
+    private String courseCode;
     private Long semOrYear;
     private String optionalSubject;
     private String studentName;
+    private String section;
     private String email;
     private String enrollmentNumber;
     private String phone;

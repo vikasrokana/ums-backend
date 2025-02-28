@@ -49,14 +49,34 @@ public class AttendanceController {
         }
     }
 
+//    @ApiOperation(value = "This API will be used to get student attendance list for faculty")
+//    @RequestMapping(value = {"faculty/get-student-attendance-list"},method = RequestMethod.GET)
+//    public ResponseEntity<?> getStudentAttendanceList(@RequestParam(value = "date",required = false) String date ,
+//                                                      @RequestParam(value = "pageNumber", required = false) Integer pageNumber, HttpServletRequest request) throws Exception {
+//        try {
+//            Long userId = appUtils.getUserId(request);
+//            String  role = appUtils.getCurrentUserRole(request);
+//            List<AttendanceResponse> attendanceResponseList = attendanceService.getStudentAttendance(date,userId,role, pageNumber);
+//            return ResponseEntity.ok(attendanceResponseList);
+//
+//        } catch (Exception e) {
+//            logger.error(e.getMessage(), e);
+//            throw new Exception(e.getMessage());
+//        }
+//    }
+
     @ApiOperation(value = "This API will be used to get student attendance list for faculty")
     @RequestMapping(value = {"faculty/get-student-attendance-list"},method = RequestMethod.GET)
-    public ResponseEntity<?> getStudentAttendanceList(@RequestParam(value = "date",required = false) String date ,
-                                                      @RequestParam(value = "pageNumber", required = false) Integer pageNumber, HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> getStudentAttendanceList(
+            @RequestParam(value = "courseId",required = true)Long courseId,
+            @RequestParam(value = "subjectId",required = true)Long subjectId,
+            @RequestParam(value = "section",required = true)String section,
+            @RequestParam(value = "date",required = true) String date ,
+            @RequestParam(value = "pageNumber", required = false) Integer pageNumber, HttpServletRequest request) throws Exception {
         try {
             Long userId = appUtils.getUserId(request);
             String  role = appUtils.getCurrentUserRole(request);
-            List<AttendanceResponse> attendanceResponseList = attendanceService.getStudentAttendance(date,userId,role, pageNumber);
+            List<AttendanceResponse> attendanceResponseList = attendanceService.getStudentAttendance(courseId, subjectId, section,date,userId,role, pageNumber);
             return ResponseEntity.ok(attendanceResponseList);
 
         } catch (Exception e) {

@@ -7,12 +7,15 @@ import java.sql.Timestamp;
 @Data
 public class AttendanceResponse {
     private Long id;
-    private String courseCode;
-    private String subjectCode;
+    private Long courseId;
+    private Long subjectId;
     private Long semOrYear;
     private String date;
     private String time;
     private Long studentId;
+    private String studentName;
+    private String rollNumber;
+    private String enrollmentNumber;
     private Boolean present;
     private String section;
     private Timestamp createdOn;

@@ -49,11 +49,11 @@ public class AttendanceServiceImpl implements AttendanceService{
             }
 
             // Map fields from AttendanceRequest to Attendance entity
-            if (attendance1.getCourseCode() != null) {
-                attendance.setCourseCode(attendance1.getCourseCode());
+            if (attendance1.getCourseId() != null) {
+                attendance.setCourseId(attendance1.getCourseId());
             }
-            if (attendance1.getSubjectCode() != null) {
-                attendance.setSubjectCode(attendance1.getSubjectCode());
+            if (attendance1.getSubjectId() != null) {
+                attendance.setSubjectId(attendance1.getSubjectId());
             }
             if (attendance1.getDate() != null) {
                 attendance.setDate(attendance1.getDate());
@@ -82,46 +82,94 @@ public class AttendanceServiceImpl implements AttendanceService{
         return savedAttendanceList;
     }
 
+
+//    @Override
+//    public List<AttendanceResponse> getStudentAttendance(String courseCode, String subjectCode, String date, Long userId, String role, Integer pageNumber) throws RecordNotFoundException {
+//        List<Attendance> attendanceList;
+//        Pageable pageable = AppUtils.getPageRange(pageNumber);
+//        // Ensure correct string comparison
+//        if ("admin".equals(role)) {
+//            attendanceList = attendanceRepository.findForAdminByDateAndIsActive(date, true, pageable);
+//        } else {
+//            attendanceList = attendanceRepository.findByDateAndIsActive(date, userId, true,pageable);
+//        }
+//
+//        // Return an empty list instead of throwing an exception
+//        if (attendanceList.isEmpty()) {
+//            logger.warn("No attendance records found for date: {}", date);
+//            return new ArrayList<>();
+//        }
+//
+//        // Convert Attendance to AttendanceResponse using Java Streams
+//        List<AttendanceResponse> attendanceResponseList = attendanceList.stream().map(attendance -> {
+//            AttendanceResponse response = new AttendanceResponse();
+//            response.setId(attendance.getId());
+//            response.setCourseCode(attendance.getCourseCode());
+//            response.setSubjectCode(attendance.getSubjectCode());
+//            response.setSemOrYear(attendance.getSemOrYear());
+//            response.setDate(attendance.getDate());
+//            response.setTime(attendance.getTime());
+//            response.setStudentId(attendance.getStudentId());
+//            response.setPresent(attendance.getPresent());
+//            response.setSection(attendance.getSection());
+//            response.setCreatedOn(attendance.getCreatedOn());
+//            response.setUpdatedOn(attendance.getUpdatedOn());
+//            response.setCreatedBy(attendance.getCreatedBy());
+//            response.setUpdateBy(attendance.getUpdateBy());
+//            return response;
+//        }).collect(Collectors.toList());
+//
+//        logger.info("Retrieved {} attendance records for date: {}", attendanceResponseList.size(), date);
+//        return attendanceResponseList;
+//    }
+
     @Override
-    public List<AttendanceResponse> getStudentAttendance(String date, Long userId, String role, Integer pageNumber) throws RecordNotFoundException {
+    public List<AttendanceResponse> getStudentAttendance(Long courseId, Long subjectId, String section, String date, Long userId, String role, Integer pageNumber) throws RecordNotFoundException {
         List<Attendance> attendanceList;
+        List<Student> studentList;
+        List<AttendanceResponse> attendanceResponseList = new ArrayList<>();
         Pageable pageable = AppUtils.getPageRange(pageNumber);
-        // Ensure correct string comparison
-        if ("admin".equals(role)) {
-            attendanceList = attendanceRepository.findForAdminByDateAndIsActive(date, true, pageable);
-        } else {
-            attendanceList = attendanceRepository.findByDateAndIsActive(date, userId, true,pageable);
-        }
 
-        // Return an empty list instead of throwing an exception
-        if (attendanceList.isEmpty()) {
-            logger.warn("No attendance records found for date: {}", date);
-            return new ArrayList<>();
-        }
+        studentList = studentRepository.findByCourseIdAndSectionAndIsActive(courseId, section, true);
+        attendanceList = attendanceRepository.findByCourseIdAndSectionAndSubjectIdAndDateAndIsActive(courseId, section, subjectId, date, true, pageable);
 
-        // Convert Attendance to AttendanceResponse using Java Streams
-        List<AttendanceResponse> attendanceResponseList = attendanceList.stream().map(attendance -> {
+
+        for (Student student : studentList) {
+            Attendance attendance = findAttendanceByStudentId(attendanceList, student.getId());
+
             AttendanceResponse response = new AttendanceResponse();
-            response.setId(attendance.getId());
-            response.setCourseCode(attendance.getCourseCode());
-            response.setSubjectCode(attendance.getSubjectCode());
-            response.setSemOrYear(attendance.getSemOrYear());
-            response.setDate(attendance.getDate());
-            response.setTime(attendance.getTime());
-            response.setStudentId(attendance.getStudentId());
-            response.setPresent(attendance.getPresent());
-            response.setSection(attendance.getSection());
-            response.setCreatedOn(attendance.getCreatedOn());
-            response.setUpdatedOn(attendance.getUpdatedOn());
-            response.setCreatedBy(attendance.getCreatedBy());
-            response.setUpdateBy(attendance.getUpdateBy());
-            return response;
-        }).collect(Collectors.toList());
+            response.setStudentId(student.getId());
+            response.setRollNumber(student.getRollNumber());
+            response.setEnrollmentNumber(student.getEnrollmentNumber());
+            response.setStudentName(student.getStudentName());
+            response.setCourseId(courseId);
+            response.setSection(student.getSection());
+            response.setSemOrYear(student.getSemOrYear());
+            response.setSubjectId(subjectId);
 
-        logger.info("Retrieved {} attendance records for date: {}", attendanceResponseList.size(), date);
+            if (attendance != null) {
+                response.setId(attendance.getId());
+                response.setDate(attendance.getDate());
+                response.setTime(attendance.getTime());
+                response.setPresent(attendance.getPresent());
+                response.setCreatedOn(attendance.getCreatedOn());
+                response.setUpdatedOn(attendance.getUpdatedOn());
+                response.setCreatedBy(attendance.getCreatedBy());
+                response.setUpdateBy(attendance.getUpdateBy());
+            } else {
+                response.setPresent(false); // Default to absent if no record exists
+            }
+
+            attendanceResponseList.add(response);
+        }
+
         return attendanceResponseList;
     }
 
+
+        public Attendance findAttendanceByStudentId(final List<Attendance> list, final Long studentId){
+            return list.stream().filter(o -> o.getStudentId().equals(studentId)).findFirst().orElse(null);
+        }
 
     @Override
     public List<AttendanceResponse> getStudentOwnAttendance(Integer pageNumber, String date, Long userId) throws RecordNotFoundException {
@@ -142,8 +190,8 @@ public class AttendanceServiceImpl implements AttendanceService{
         for(Attendance attendance:attendanceList){
             AttendanceResponse attendanceResponse = new AttendanceResponse();
             attendanceResponse.setId(attendance.getId());
-            attendanceResponse.setCourseCode(attendance.getCourseCode());
-            attendanceResponse.setSubjectCode(attendance.getSubjectCode());
+            attendanceResponse.setCourseId(attendance.getCourseId());
+            attendanceResponse.setSubjectId(attendance.getSubjectId());
             attendanceResponse.setSemOrYear(attendance.getSemOrYear());
             attendanceResponse.setDate(attendance.getDate());
             attendanceResponse.setTime(attendance.getTime());

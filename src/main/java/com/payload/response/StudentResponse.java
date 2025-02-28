@@ -6,9 +6,11 @@ import lombok.Data;
 public class StudentResponse {
     private Long id;
     private Long courseId;
+    private String courseCode;
     private Long semOrYear;
     private String optionalSubject;
     private String studentName;
+    private String section;
     private String email;
     private String phone;
     private String enrollmentNumber;

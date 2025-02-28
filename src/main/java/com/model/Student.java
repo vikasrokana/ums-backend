@@ -12,9 +12,11 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long courseId;
+    private String courseCode;
     private Long semOrYear;
     private String enrollmentNumber;
     private String rollNumber;
+    private String section;
     private String optionalSubject;
     private String studentName;
     private String email;

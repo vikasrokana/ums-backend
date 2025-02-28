@@ -1,5 +1,6 @@
 package com.repository;
 
+import com.model.Attendance;
 import com.model.Student;
 import com.model.StudentFees;
 import org.springframework.data.domain.Pageable;
@@ -29,4 +30,8 @@ public interface StudentRepository extends JpaRepository<Student,Long> {
     List<Student> findByCourseIdAndSemOrYearAndSubject(Long courseId, Long semOrYear, Pageable pageable);
     @Query(value = "SELECT * FROM student WHERE course_id =:courseId AND sem_or_year =:semOrYear and NOT user_id=:userId", nativeQuery = true)
     List<Student> findByCourseIdAndSemOrYearAndUserId(Long courseId, Long semOrYear, Long userId, Pageable pageable);
+
+    @Query(value = "SELECT * FROM student WHERE course_id = :courseId AND section = :section AND is_active = :isActive",
+            nativeQuery = true)
+    List<Student> findByCourseIdAndSectionAndIsActive(Long courseId, String section, Boolean isActive);
 }
