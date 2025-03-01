@@ -11,23 +11,27 @@ import com.payload.response.AssignSubjectResponse;
 import com.payload.response.FacultiesResponse;
 import com.payload.response.FacultySubjectResponse;
 import com.payload.response.MessageResponse;
+import com.repository.AssignSubjectRepository;
 import com.service.FacultiesService;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/")
 public class FacultiesController {
     private static final Logger logger = LoggerFactory.getLogger(FacultiesController.class);
-
+    @Autowired
+    AssignSubjectRepository assignSubjectRepository;
     @Autowired
     FacultiesService facultiesService;
     @Autowired
@@ -101,18 +105,31 @@ public class FacultiesController {
         } 
     }
 
-    @ApiOperation(value = "This API Will be used to assign subject to faculty")
-    @RequestMapping(value = {"/admin/assign-subject"},method = RequestMethod.POST)
-    public ResponseEntity<?> assignSubject(@RequestBody AssignSubjectRequest assignSubjectRequest, HttpServletRequest request) throws Exception {
-        try{
-            Long userId= appUtils.getUserId(request);
+    @ApiOperation(value = "This API will be used to assign a subject to a faculty")
+    @RequestMapping(value = "/admin/assign-subject", method = RequestMethod.POST)
+    public ResponseEntity<?> assignSubject(@RequestBody AssignSubjectRequest assignSubjectRequest, HttpServletRequest request) {
+        try {
+            Long userId = appUtils.getUserId(request);
+
+            // Check if the subject is already assigned
+            Optional<AssignSubject> existingAssignment = assignSubjectRepository
+                    .findBySubjectIdAndCourseId(assignSubjectRequest.getCourseId(), assignSubjectRequest.getSubjectId(), true);
+
+            if (existingAssignment.isPresent()) {
+                return ResponseEntity.ok(new MessageResponse(true, "This subject is already assigned"));
+            }
+
+            // Assign the subject
             AssignSubject assignSubject = facultiesService.assignSubject(assignSubjectRequest, userId);
             return ResponseEntity.ok(assignSubject);
-        }catch (Exception e){
-            logger.error(e.getMessage(),e);
-            throw new Exception(e.getMessage());
+
+        } catch (Exception e) {
+            logger.error("Error while assigning subject: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new MessageResponse(false, "Failed to assign subject: " + e.getMessage()));
         }
     }
+
 
     @ApiOperation(value = "This API Will be used to update assign subject to faculty")
     @RequestMapping(value = {"/admin/update-assign-subject"},method = RequestMethod.POST)

@@ -16,4 +16,9 @@ public class AssignSubjectResponse {
     private String subjectName;
     private String experience;
     private String qualification;
+    private String subjectCode;
+    private String courseCode;
+    private Long theoryMarks;
+    private Long practicalMarks;
+    private String subjectType;
 }

@@ -194,7 +194,7 @@ public class StudentServiceImpl implements StudentService {
 //                }
 
                 // Fetch student details
-                List<Student> studentList = studentRepository.findByCourseIdAndSemOrYearAndSubject(subject.getCourseId(), subject.getSemOrYear(), pageable);
+                List<Student> studentList = studentRepository.findByCourseIdAndSemOrYearAndSubject(subject.getCourseId(), subject.getSemOrYear(), pageable,true);
                 if (studentList.isEmpty()) {
                     logger.warn("No student found for courseId: " + subject.getCourseId() + ", semOrYear: " + subject.getSemOrYear());
                     continue; // Skip this iteration if student is null

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AssignSubjectRepository extends JpaRepository<AssignSubject, Long> {
@@ -16,4 +17,6 @@ public interface AssignSubjectRepository extends JpaRepository<AssignSubject, Lo
     List<AssignSubject> findByFacultyId(Long facultyId, Boolean isActive, Pageable pageable);
     @Query(value = "select * from assign_subject where course_id=:courseId and is_active =:isActive",nativeQuery = true)
     List<AssignSubject> findByCourseAndSem(Long courseId, Boolean isActive);
+    @Query(value = "select * from assign_subject where course_id=:courseId and subject_id =:subjectId and is_active =:isActive",nativeQuery = true)
+    Optional<AssignSubject> findBySubjectIdAndCourseId(Long courseId, Long subjectId, Boolean isActive);
 }
