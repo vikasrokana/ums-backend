@@ -12,4 +12,6 @@ import java.util.List;
 public interface FeeRepository extends JpaRepository<StudentFees,Long> {
 @Query(value = "Select * from student_fees where is_active =:isActive",nativeQuery = true)
     List<StudentFees> findByIsActive(Boolean isActive);
+    @Query(value = "Select * from student_fees where student_id =:id and is_active =:isActive",nativeQuery = true)
+    List<StudentFees> findByStudentId(Long id, Boolean isActive);
 }

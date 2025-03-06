@@ -1,9 +1,11 @@
 package com.service;
 
 import com.exception.RecordNotFoundException;
+import com.model.Student;
 import com.model.StudentFees;
 import com.payload.response.StudentFeeResponse;
 import com.repository.FeeRepository;
+import com.repository.StudentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +20,22 @@ public class StudentFeeServiceImpl implements StudentFeesService {
 
     @Autowired
     FeeRepository feeRepository;
+
+    @Autowired
+    StudentRepository studentRepository;
     @Override
-    public List<StudentFeeResponse> findFeeList() throws RecordNotFoundException {
+    public List<StudentFeeResponse> findFeeList(Long userId, String role) throws RecordNotFoundException {
         List<StudentFeeResponse> studentFeeResponses = new ArrayList<>();
+        if(role.equals("student")){
+            Student student = studentRepository.findByUserIdAndIsActive(userId,true);
+            List<StudentFees> studentFeesList = feeRepository.findByStudentId(student.getId(), true);
+
+        }
         List<StudentFees> studentFeesList = feeRepository.findByIsActive(true);
+
         if (studentFeesList.isEmpty()) {
-            throw new RecordNotFoundException("student list is not found");
+            logger.warn("student list is not found");
+            return new ArrayList<>();
         }
         for (StudentFees fees : studentFeesList) {
             StudentFeeResponse studentFeeResponse = new StudentFeeResponse();

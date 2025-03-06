@@ -87,12 +87,14 @@ public class StudentController {
         }
     }
 
-    @ApiOperation(value = "This API will be used to get the students fee list")
-    @RequestMapping(value = {"admin/get-students-fee-list"}, method = RequestMethod.GET)
+    @ApiOperation(value = "This API will be used to get the student fee list")
+    @RequestMapping(value = {"student/get-student-fee-list"}, method = RequestMethod.GET)
     public ResponseEntity<?> getStudentsFeeList(HttpServletRequest request) {
 
         try {
-            List<StudentFeeResponse> studentFeesList = studentFeesService.findFeeList();
+            Long userId = appUtils.getUserId(request);
+            String role = appUtils.getCurrentUserRole(request);
+            List<StudentFeeResponse> studentFeesList = studentFeesService.findFeeList(userId,role);
             return ResponseEntity.ok(studentFeesList);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
