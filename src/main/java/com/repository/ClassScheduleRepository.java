@@ -17,8 +17,10 @@ public interface ClassScheduleRepository extends JpaRepository<ClassSchedule,Lon
     @Modifying
     @Query(value = "Update class_schedule set is_active =0 where id = :classScheduleId",nativeQuery = true)
     Integer deleteClassSchedule(Long classScheduleId);
-//
-//    Course findByIdAndIsActive(Long courseId, Boolean isActive);
-//    @Query(value = "select id from course where course_code =:courseCode", nativeQuery = true)
-//    Long findByCourseCode(String courseCode);
+    @Query(value = "Select * from class_schedule where course_id =:courseId and subject_id =:id and is_active =:isActive", nativeQuery = true)
+    ClassSchedule findByCourseIdAndSubjectId(Long courseId, Long id, Boolean isActive);
+    @Query(value = "Select * from class_schedule where faculty_id =:id and is_active =:isActive", nativeQuery = true)
+    List<ClassSchedule> findByFacultyId(Long id, Boolean isActive);
+    @Query(value = "SELECT * FROM class_schedule WHERE course_id = :courseId AND subject_id IN (:subjectIds) AND is_active = :isActive", nativeQuery = true)
+    List<ClassSchedule> findByCourseIdAndSubjectIdIn(Long courseId, List<Long> subjectIds, Boolean isActive);
 }

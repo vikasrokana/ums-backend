@@ -2,10 +2,10 @@ package com.service;
 
 import com.Utility.AppUtils;
 import com.exception.RecordNotFoundException;
-import com.model.ClassSchedule;
+import com.model.*;
 import com.payload.request.ClassScheduleRequest;
 import com.payload.response.ClassScheduleResponse;
-import com.repository.ClassScheduleRepository;
+import com.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +13,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ClassScheduleServiceImpl implements ClassScheduleService{
     @Autowired
     ClassScheduleRepository classScheduleRepository;
+
+    @Autowired
+    StudentRepository studentRepository;
+    @Autowired
+    FacultiesRepository facultiesRepository;
+    @Autowired
+    SubjectRepository subjectRepository;
     private static final Logger logger = LoggerFactory.getLogger(CourseServiceImpl.class);
     @Override
     public ClassSchedule addClassSchedule(ClassScheduleRequest classScheduleRequest, Long userId) {
@@ -57,38 +66,60 @@ public class ClassScheduleServiceImpl implements ClassScheduleService{
             classSchedule.setRoomNo(classScheduleRequest.getRoomNo());
 
         }
-
-
         ClassSchedule classSchedule1 = classScheduleRepository.save(classSchedule);
         logger.info("course added successfully");
         return classSchedule1;
     }
 
     @Override
-    public List<ClassScheduleResponse> getClassSchedule(Integer pageNumber) throws RecordNotFoundException {
+    public List<ClassScheduleResponse> getClassSchedule(Long userId, String role, Integer pageNumber) throws RecordNotFoundException {
         Pageable pageable = AppUtils.getPageRange(pageNumber);
-        List<ClassScheduleResponse> ClassScheduleResponseList = new ArrayList<>();
-        List<ClassSchedule> classScheduleList = classScheduleRepository.findByIsActive(true, pageable);
-        if(classScheduleList.isEmpty()){
-//          throw new RecordNotFoundException("course list is not found");
-            logger.warn("class schedule list is not found");
-            return new ArrayList<>();
+        List<ClassScheduleResponse> classScheduleResponseList;
+
+        List<ClassSchedule> classScheduleList;
+
+        if ("student".equals(role)) {
+            Student student = studentRepository.findByUserIdAndIsActive(userId, true);
+            List<Subject> subjectList = subjectRepository.findByCourseIdAndSem(student.getCourseId(), student.getSemOrYear(), true, pageable);
+
+            // Fetch class schedules for all subjects in a single query to reduce database calls
+            List<Long> subjectIds = subjectList.stream().map(Subject::getId).collect(Collectors.toList());
+            classScheduleList = classScheduleRepository.findByCourseIdAndSubjectIdIn(student.getCourseId(), subjectIds, true);
+
+        } else if ("faculty".equals(role)) {
+            Faculties faculties = facultiesRepository.findByUserId(userId, true);
+            classScheduleList = classScheduleRepository.findByFacultyId(faculties.getId(), true);
+
+        } else {
+            classScheduleList = classScheduleRepository.findByIsActive(true, pageable);
         }
-        for(ClassSchedule classSchedule: classScheduleList){
-            ClassScheduleResponse classScheduleResponse= new ClassScheduleResponse();
-            classScheduleResponse.setId(classSchedule.getId());
-            classScheduleResponse.setCourseId(classSchedule.getCourseId());
-            classScheduleResponse.setSubjectId(classSchedule.getSubjectId());
-            classScheduleResponse.setFacultyId(classSchedule.getFacultyId());
-            classScheduleResponse.setStartTime(classSchedule.getStartTime());
-            classScheduleResponse.setEndTime(classSchedule.getEndTime());
-            classScheduleResponse.setDay(classSchedule.getDay());
-            classScheduleResponse.setRoomNo(classSchedule.getRoomNo());
-            ClassScheduleResponseList.add(classScheduleResponse);
+
+        if (classScheduleList.isEmpty()) {
+            logger.warn("Class schedule list is not found");
+            return Collections.emptyList();
         }
-        logger.info("get class schedule list");
-        return ClassScheduleResponseList;
+
+        // Convert ClassSchedule to ClassScheduleResponse
+        classScheduleResponseList = classScheduleList.stream().map(this::mapToResponse).collect(Collectors.toList());
+
+        logger.info("Successfully fetched class schedule list");
+        return classScheduleResponseList;
     }
+
+    // Utility method to map ClassSchedule to ClassScheduleResponse
+    private ClassScheduleResponse mapToResponse(ClassSchedule classSchedule) {
+        ClassScheduleResponse response = new ClassScheduleResponse();
+        response.setId(classSchedule.getId());
+        response.setCourseId(classSchedule.getCourseId());
+        response.setSubjectId(classSchedule.getSubjectId());
+        response.setFacultyId(classSchedule.getFacultyId());
+        response.setStartTime(classSchedule.getStartTime());
+        response.setEndTime(classSchedule.getEndTime());
+        response.setDay(classSchedule.getDay());
+        response.setRoomNo(classSchedule.getRoomNo());
+        return response;
+    }
+
 
     @Override
     public Boolean deleteClassSchedule(Long classScheduleId) {

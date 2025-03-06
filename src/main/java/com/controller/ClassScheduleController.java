@@ -54,10 +54,12 @@ public class ClassScheduleController {
     }
 
     @ApiOperation(value = "This API will be used to get class schedule list")
-    @RequestMapping(value = {"/open/get-class-schedule-list"},method = RequestMethod.GET)
+    @RequestMapping(value = {"/student/get-class-schedule-list"},method = RequestMethod.GET)
     public ResponseEntity<?> getClassScheduleList(@RequestParam(value = "pageNumber",required = false)Integer pageNumber, HttpServletRequest request) throws Exception {
         try {
-            List<ClassScheduleResponse> classScheduleResponseList = classScheduleService.getClassSchedule(pageNumber);
+            String role = appUtils.getCurrentUserRole(request);
+            Long userId = appUtils.getUserId(request);
+            List<ClassScheduleResponse> classScheduleResponseList = classScheduleService.getClassSchedule(userId,role,pageNumber);
             return ResponseEntity.ok(classScheduleResponseList);
 
         } catch (Exception e) {
