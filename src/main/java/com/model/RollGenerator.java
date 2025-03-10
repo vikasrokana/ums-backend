@@ -12,7 +12,7 @@ public class RollGenerator {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long courseId;
-    private String semOrYear;
+    private Long semOrYear;
     private String rollNumber;
     private Boolean isActive = true;
 }

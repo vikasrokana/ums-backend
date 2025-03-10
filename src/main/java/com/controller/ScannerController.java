@@ -31,39 +31,6 @@ public class ScannerController {
     ScannerService scannerService;
     @Autowired
     AppUtils appUtils;
-
-//    @ApiOperation(value = "This api will be using to scan and make pdf of text")
-//    @RequestMapping(value = "/admin/scan-file", method = RequestMethod.POST)
-//    public ResponseEntity<?> scanFile(@RequestParam("file") MultipartFile file ) throws Exception {
-//        try {
-//            File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename());
-//            file.transferTo(convFile);
-//            String pdfFilePath = scannerService.scanFileAndGeneratePDF(convFile);
-//            return ResponseEntity.ok(new MessageResponse(false, "file scan successful." + "C:\\Users\\User\\Documents\\output.pdf"));
-//
-//        } catch (Exception e) {
-//            logger.error(e.getMessage(), e);
-//            throw new Exception(e.getMessage());
-//        }
-//    }
-
-
-//    @ApiOperation(value = "This api will be using to scan and change into pdf")
-//    @RequestMapping(value = "/admin/scan-file-pdf", method = RequestMethod.POST)
-//    public ResponseEntity<?> scanFilePdf(@RequestParam("file") MultipartFile file ) throws Exception {
-//        try {
-//            // Create a new PDF document
-//            PDDocument document = new PDDocument();
-//            PDPage page = new PDPage();
-//            document.addPage(page);
-//            String pdfFilePath = scannerService.scanAndGeneratePDF(document,file);
-//            return ResponseEntity.ok(new MessageResponse(false, "file scan successful." + "C:\\Users\\User\\Documents\\"));
-//        } catch (Exception e) {
-//            logger.error(e.getMessage(), e);
-//            throw new Exception(e.getMessage());
-//        }
-//    }
-
     @ApiOperation(value = "This api will be using to store the pdf in database")
     @RequestMapping(value = "/admin/upload-file", method = RequestMethod.POST)
     public ResponseEntity<?> storeFilePdf(@RequestParam("file") MultipartFile file

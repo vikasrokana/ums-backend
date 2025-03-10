@@ -13,10 +13,14 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Month;
 import java.time.Year;
+import java.time.YearMonth;
 import java.util.Date;
 import java.util.Random;
 import java.util.TimeZone;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class AppUtils {
@@ -56,6 +60,28 @@ public class AppUtils {
         // Combine year, course code, and unique number to form the enrollment number
         return currentYear + "-" + courseCode + "-" + uniqueNumber;
     }
+
+    public static String generateUniqueNumber(String prevNumber) {
+         AtomicInteger counter;
+        if (prevNumber == null || prevNumber.isEmpty()) {
+            counter = new AtomicInteger(1000); // Start from 1000 if no previous number exists
+        } else {
+            // Extract the last sequence number from the previous unique number
+            String[] parts = prevNumber.split("-");
+            int lastSequence = Integer.parseInt(parts[2]); // Get the last part (sequence)
+            counter = new AtomicInteger(lastSequence + 1); // Increment the last sequence number
+        }
+
+        LocalDate now = LocalDate.now();
+        int year = now.getYear();
+        int monthDay = now.getMonthValue() * 100 + now.getDayOfMonth(); // MMDD format
+
+        int sequence = counter.get(); // Get the incremented sequence
+
+        return String.format("%d-%04d-%04d", year, monthDay, sequence);
+    }
+
+
     public Long getUserId(HttpServletRequest request) {
         String role = getCurrentUserRole(request);
         String jwt = tokenProvider.getJwtFromRequest(request);

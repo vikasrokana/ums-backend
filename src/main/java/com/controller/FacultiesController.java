@@ -4,7 +4,6 @@ import com.Utility.AppUtils;
 import com.dao.AssignSubjectDao;
 import com.model.AssignSubject;
 import com.model.Faculties;
-import com.model.User;
 import com.payload.request.AssignSubjectRequest;
 import com.payload.request.FacultiesRequest;
 import com.payload.response.AssignSubjectResponse;

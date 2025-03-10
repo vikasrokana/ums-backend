@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.text.SimpleDateFormat;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -38,6 +39,8 @@ public class ScannerServiceImpl implements ScannerService {
     StudentRepository studentRepository;
     @Autowired
     MarkSheetRepository markSheetRepository;
+    @Autowired
+    AppUtils appUtils;
 
     @Autowired
     ExamFileRecordRepository examFileRecordRepository;
@@ -118,7 +121,9 @@ public class ScannerServiceImpl implements ScannerService {
 
     @Override
     public ExamFileRecord saveStudentFile(MultipartFile file) throws IOException {
-        String uniqueNumber = UUID.randomUUID().toString();
+//        String uniqueNumber = UUID.randomUUID().toString(); // year
+        ExamFileRecord examFileRecord1 = examFileRecordRepository.findLastUniqueNumber(true);
+        String uniqueNumber = appUtils.generateUniqueNumber(examFileRecord1.getUniqueNumber());
         String originalFilename = file.getOriginalFilename();
         String filenameWithoutExtension = originalFilename.substring(0, originalFilename.lastIndexOf('.'));
         String fileName = filenameWithoutExtension + uniqueNumber +".pdf";
@@ -139,6 +144,7 @@ public class ScannerServiceImpl implements ScannerService {
         examFileRecord.setUniqueNumber(uniqueNumber);
         examFileRecord.setDate(strDate);
         examFileRecord.setFileUrl(fileUrl);
+        examFileRecord.setCreatedOn(AppUtils.getCurrentIstTime());
         return examFileRecordRepository.save(examFileRecord);
 
     }
@@ -148,16 +154,18 @@ public class ScannerServiceImpl implements ScannerService {
         List<ExamFileRecord> examFileRecordList;
         examFileRecordList = examFileRecordRepository.getExamFileList(true);
         if (examFileRecordList == null || examFileRecordList.isEmpty()) {
-            throw new RecordNotFoundException("exam file not found with found");
+            logger.warn("exam file not found with found");
+            return new ArrayList<>();
         }
         return examFileRecordList;
     }
 
     @Override
-    public ExamFileRecord getExamSheetById(Long sheetId) throws RecordNotFoundException {
-        ExamFileRecord examFileRecord = examFileRecordRepository.findByIdAndIsActive(sheetId,true);
-        if(null == examFileRecord){
-            throw new RecordNotFoundException("exam sheet not found with id:: " + sheetId);
+    public ExamFileRecord getExamSheetById(Long sheetId) {
+        ExamFileRecord examFileRecord = examFileRecordRepository.findByIdAndIsActive(sheetId, true);
+        if (examFileRecord == null) {
+            logger.warn("Exam sheet not found with id: " + sheetId);
+            return null; // Caller must handle null values
         }
         logger.info("Get exam sheet using id");
         return examFileRecord;
