@@ -15,6 +15,8 @@ public class ExamFileRecord {
     private Long id;
     private String uniqueNumber;
     private String fileUrl;
+    private Long courseId;
+    private Long subjectId;
     private String date;
     private Timestamp createdOn;
     private Timestamp updatedOn;

@@ -14,12 +14,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -31,17 +33,24 @@ public class ScannerController {
     ScannerService scannerService;
     @Autowired
     AppUtils appUtils;
+
     @ApiOperation(value = "This api will be using to store the pdf in database")
-    @RequestMapping(value = "/admin/upload-file", method = RequestMethod.POST)
-    public ResponseEntity<?> storeFilePdf(@RequestParam("file") MultipartFile file
-                                         ) throws Exception {
-            try {
-                ExamFileRecord examFileRecord = scannerService.saveStudentFile(file);
-                return new ResponseEntity<>(examFileRecord, HttpStatus.OK);
-            } catch (IOException e) {
-                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    @RequestMapping(value = "/admin/upload-file", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> storeFilePdf(@RequestParam(value = "courseId", required = true) Long courseId,
+                                          @RequestParam(value = "subjectId", required = true) Long subjectId,
+                                          @RequestParam(value = "files", required = true) MultipartFile[] files) throws Exception {
+
+        try {
+            List<ExamFileRecord> savedFiles = new ArrayList<>();
+            for (MultipartFile file : files) {
+                ExamFileRecord examFileRecord = scannerService.saveStudentFile(courseId, subjectId, file);
+                savedFiles.add(examFileRecord);
             }
+            return new ResponseEntity<>(savedFiles, HttpStatus.OK);
+        } catch (IOException e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
 
     @ApiOperation(value = "This API will be used to get student exam sheet list")
     @RequestMapping(value = {"admin/get-exam-sheet-list"}, method = RequestMethod.GET)
@@ -66,28 +75,29 @@ public class ScannerController {
             throw new Exception(e.getMessage());
         }
     }
+
     @ApiOperation(value = "This API Will be used to add mark of student")
-    @RequestMapping(value = {"/admin/add-marks"},method = RequestMethod.POST)
+    @RequestMapping(value = {"/admin/add-marks"}, method = RequestMethod.POST)
     public ResponseEntity<?> addMarks(@RequestBody MarkSheetRequest markSheetRequest, HttpServletRequest request) throws Exception {
-        try{
+        try {
             Long userId = appUtils.getUserId(request);
-            MarkSheet  markSheet = scannerService.addMarks(markSheetRequest,userId);
+            MarkSheet markSheet = scannerService.addMarks(markSheetRequest, userId);
             return ResponseEntity.ok(markSheet);
-        }catch (Exception e){
-            logger.error(e.getMessage(),e);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             throw new Exception(e.getMessage());
         }
     }
 
     @ApiOperation(value = "This API Will be used to update mark of student")
-    @RequestMapping(value = {"/admin/update-marks"},method = RequestMethod.POST)
+    @RequestMapping(value = {"/admin/update-marks"}, method = RequestMethod.POST)
     public ResponseEntity<?> updateMarks(@RequestBody MarkSheetRequest markSheetRequest, HttpServletRequest request) throws Exception {
-        try{
+        try {
             Long userId = appUtils.getUserId(request);
-            MarkSheet  markSheet = scannerService.addMarks(markSheetRequest,userId);
+            MarkSheet markSheet = scannerService.addMarks(markSheetRequest, userId);
             return ResponseEntity.ok(markSheet);
-        }catch (Exception e){
-            logger.error(e.getMessage(),e);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             throw new Exception(e.getMessage());
         }
     }
