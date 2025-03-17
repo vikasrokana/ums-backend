@@ -54,9 +54,10 @@ public class ScannerController {
 
     @ApiOperation(value = "This API will be used to get student exam sheet list")
     @RequestMapping(value = {"admin/get-exam-sheet-list"}, method = RequestMethod.GET)
-    public ResponseEntity<?> getExamFileList() throws Exception {
+    public ResponseEntity<?> getExamFileList(@RequestParam(value = "courseId",required = false) Long courseId,
+                                             @RequestParam(value = "subjectId",required = false) Long subjectId ) throws Exception {
         try {
-            List<ExamFileRecord> studentList = scannerService.getExamFileList();
+            List<ExamFileRecord> studentList = scannerService.getExamFileList(courseId,subjectId);
             return ResponseEntity.ok(studentList);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

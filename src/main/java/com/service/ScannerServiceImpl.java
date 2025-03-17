@@ -87,9 +87,9 @@ public class ScannerServiceImpl implements ScannerService {
     }
 
     @Override
-    public List<ExamFileRecord> getExamFileList() throws RecordNotFoundException {
+    public List<ExamFileRecord> getExamFileList(Long courseId, Long subjectId) throws RecordNotFoundException {
         List<ExamFileRecord> examFileRecordList;
-        examFileRecordList = examFileRecordRepository.getExamFileList(true);
+        examFileRecordList = examFileRecordRepository.getExamFileList(courseId,subjectId,true);
         if (examFileRecordList == null || examFileRecordList.isEmpty()) {
             logger.warn("exam file not found with found");
             return new ArrayList<>();

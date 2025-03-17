@@ -12,7 +12,7 @@ public interface ScannerService {
 
     ExamFileRecord saveStudentFile(Long courseId, Long subjectId, MultipartFile file) throws IOException;
 
-    List<ExamFileRecord> getExamFileList() throws RecordNotFoundException;
+    List<ExamFileRecord> getExamFileList(Long courseId, Long subjectId) throws RecordNotFoundException;
 
     ExamFileRecord getExamSheetById(Long sheetId) throws RecordNotFoundException;
 
