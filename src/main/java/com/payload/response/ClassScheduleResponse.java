@@ -6,8 +6,11 @@ import lombok.Data;
 public class ClassScheduleResponse {
     private Long id;
     private Long courseId;
-    private String subjectId;
-    private String facultyId;
+    private String courseName;
+    private Long subjectId;
+    private String subjectName;
+    private Long facultyId;
+    private String facultyName;
     private String day;
     private String startTime;
     private String endTime;
