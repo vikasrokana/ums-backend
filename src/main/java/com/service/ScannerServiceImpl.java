@@ -126,8 +126,8 @@ public class ScannerServiceImpl implements ScannerService {
         if(markSheetRequest.getRollNumber() !=null){
             markSheet.setRollNumber(markSheetRequest.getRollNumber());
         }
-        if (markSheetRequest.getSubjectCode() != null) {
-            markSheet.setSubjectCode(markSheetRequest.getSubjectCode());
+        if (markSheetRequest.getSubjectId() != null) {
+            markSheet.setSubjectId(markSheetRequest.getSubjectId());
         }
         if (markSheetRequest.getQ1() != null) {
             markSheet.setQ1(markSheetRequest.getQ1());

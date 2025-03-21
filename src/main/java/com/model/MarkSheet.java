@@ -13,7 +13,7 @@ public class MarkSheet {
     private Long id;
     private Long examRecordId;
     private String rollNumber;
-    private String  subjectCode;
+    private Long  subjectId;
     private Double q1;
     private Double q2;
     private Double q3;
