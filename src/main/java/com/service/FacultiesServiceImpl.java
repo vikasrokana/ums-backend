@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -167,5 +168,54 @@ public class FacultiesServiceImpl implements FacultiesService{
         logger.info("Get faculty details id");
         return faculties;
     }
+
+    @Override
+    public List<FacultiesResponse> getFacultiesListBySubjectId(Long subjectId, Integer pageNumber) {
+        List<FacultiesResponse> facultiesResponseList = new ArrayList<>();
+        Pageable pageable = AppUtils.getPageRange(pageNumber);
+
+        List<AssignSubject> assignSubjectList = assignSubjectRepository.findBySubjectId(subjectId, true);
+        if (assignSubjectList.isEmpty()) {
+            logger.info("No faculty assigned for subject ID: " + subjectId);
+            return new ArrayList<>();
+        }
+
+        List<Long> facultyIds = assignSubjectList.stream()
+                .map(AssignSubject::getFacultyId)
+                .collect(Collectors.toList());
+
+        List<Faculties> facultiesList = facultiesRepository.findByIdInAndIsActive(facultyIds, true);
+        if (facultiesList.isEmpty()) {
+            logger.info("No active faculties found for subject ID: " + subjectId);
+            return new ArrayList<>();
+        }
+
+        for (Faculties faculty : facultiesList) {
+            if (faculty == null) continue;  // Avoid NullPointerException
+
+            FacultiesResponse facultiesResponse = new FacultiesResponse();
+            facultiesResponse.setId(faculty.getId());
+            facultiesResponse.setFacultyName(faculty.getFacultyName());
+            facultiesResponse.setPosition(faculty.getPosition());
+            facultiesResponse.setEmail(faculty.getEmail());
+            facultiesResponse.setPhone(faculty.getPhone());
+            facultiesResponse.setQualification(faculty.getQualification());
+            facultiesResponse.setExperience(faculty.getExperience());
+            facultiesResponse.setDob(faculty.getDob());
+            facultiesResponse.setGender(faculty.getGender());
+            facultiesResponse.setProfilePic(faculty.getProfilePic());
+            facultiesResponse.setJoinDate(faculty.getJoinDate());
+            facultiesResponse.setAddress(faculty.getAddress());
+            facultiesResponse.setPinCode(faculty.getPinCode());
+            facultiesResponse.setCreatedOn(faculty.getCreatedOn());
+            facultiesResponse.setUpdatedOn(faculty.getUpdatedOn());
+
+            facultiesResponseList.add(facultiesResponse);
+        }
+
+        logger.info("Successfully fetched faculty list for subject ID: " + subjectId);
+        return facultiesResponseList;
+    }
+
 }
 

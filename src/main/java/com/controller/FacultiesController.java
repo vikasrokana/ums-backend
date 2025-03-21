@@ -63,6 +63,19 @@ public class FacultiesController {
             throw new Exception(e.getMessage());
         }
     }
+    @ApiOperation(value = "This API will be used to get faculties list by assign subject id")
+    @RequestMapping(value = {"/admin/get-faculties-list-by-subject-id"},method = RequestMethod.GET)
+    public ResponseEntity<?> getFacultiesList(@RequestParam(value = "subjectId",required = true) Long subjectId,
+            @RequestParam(value = "pageNumber", required = false)Integer pageNumber, HttpServletRequest request) throws Exception {
+        try {
+            List<FacultiesResponse> facultiesResponseList = facultiesService.getFacultiesListBySubjectId(subjectId, pageNumber);
+            return ResponseEntity.ok(facultiesResponseList);
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new Exception(e.getMessage());
+        }
+    }
 
     @ApiOperation(value = "This API will be used to get Faculties by id")
     @RequestMapping(value = {"/faculty/get-faculties-details"}, method = RequestMethod.GET)

@@ -12,7 +12,7 @@ import java.util.List;
 public interface FacultiesService {
     Faculties addFaculties(FacultiesRequest facultiesRequest,Long userId);
 
-    List<FacultiesResponse> getFacultiesList(Integer pageNumber) throws RecordNotFoundException;
+    List<FacultiesResponse> getFacultiesList( Integer pageNumber) throws RecordNotFoundException;
 
     Faculties getFacultyById(Long facultyId) throws RecordNotFoundException;
 
@@ -22,4 +22,5 @@ public interface FacultiesService {
 
     Faculties getFacultyDetails(Long userId) throws RecordNotFoundException;
 
+    List<FacultiesResponse> getFacultiesListBySubjectId(Long subjectId, Integer pageNumber);
 }
