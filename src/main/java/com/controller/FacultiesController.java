@@ -65,7 +65,7 @@ public class FacultiesController {
     }
     @ApiOperation(value = "This API will be used to get faculties list by assign subject id")
     @RequestMapping(value = {"/admin/get-faculties-list-by-subject-id"},method = RequestMethod.GET)
-    public ResponseEntity<?> getFacultiesList(@RequestParam(value = "subjectId",required = true) Long subjectId,
+    public ResponseEntity<?> getFacultiesListBySubjectId(@RequestParam(value = "subjectId",required = true) Long subjectId,
             @RequestParam(value = "pageNumber", required = false)Integer pageNumber, HttpServletRequest request) throws Exception {
         try {
             List<FacultiesResponse> facultiesResponseList = facultiesService.getFacultiesListBySubjectId(subjectId, pageNumber);
