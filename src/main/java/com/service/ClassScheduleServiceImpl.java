@@ -21,7 +21,8 @@ import java.util.stream.Collectors;
 public class ClassScheduleServiceImpl implements ClassScheduleService{
     @Autowired
     ClassScheduleRepository classScheduleRepository;
-
+    @Autowired
+    CourseRepository courseRepository;
     @Autowired
     StudentRepository studentRepository;
     @Autowired
@@ -108,16 +109,52 @@ public class ClassScheduleServiceImpl implements ClassScheduleService{
 
     // Utility method to map ClassSchedule to ClassScheduleResponse
     private ClassScheduleResponse mapToResponse(ClassSchedule classSchedule) {
+        List<Course> courseList = courseRepository.findAll();
+        List<Subject> subjectList = subjectRepository.findAll();
+        List<Faculties> facultyList = facultiesRepository.findAll();
         ClassScheduleResponse response = new ClassScheduleResponse();
+        Course course = findCourseById(courseList,classSchedule.getCourseId());
+        Subject subject = findSubjectById(subjectList,classSchedule.getSubjectId());
+        Faculties faculty = findFacultyById(facultyList,classSchedule.getFacultyId());
         response.setId(classSchedule.getId());
         response.setCourseId(classSchedule.getCourseId());
+        response.setCourseName(course.getCourseName());
         response.setSubjectId(classSchedule.getSubjectId());
+        response.setSubjectName(subject.getSubjectName());
         response.setFacultyId(classSchedule.getFacultyId());
+        response.setFacultyName(faculty.getFacultyName());
         response.setStartTime(classSchedule.getStartTime());
         response.setEndTime(classSchedule.getEndTime());
         response.setDay(classSchedule.getDay());
         response.setRoomNo(classSchedule.getRoomNo());
         return response;
+    }
+
+    public Course findCourseById(List<Course> courseList, Long courseId) {
+        for (Course course : courseList) {
+            if (course.getId() == courseId) {
+                return course;
+            }
+        }
+        return null;
+    }
+
+    public Subject findSubjectById(List<Subject> subjectList, Long subjectId) {
+        for (Subject subject : subjectList) {
+            if (subject.getId() == subjectId) {
+                return subject;
+            }
+        }
+        return null;
+    }
+
+    public Faculties findFacultyById(List<Faculties> facultyList, Long facultyId) {
+        for (Faculties faculty : facultyList) {
+            if (faculty.getId() == facultyId) {
+                return faculty;
+            }
+        }
+        return null;
     }
 
 
