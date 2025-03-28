@@ -111,6 +111,7 @@ public class ScannerServiceImpl implements ScannerService {
     @Override
     public MarkSheet addMarks(MarkSheetRequest markSheetRequest, Long userId) {
         MarkSheet markSheet = new MarkSheet();
+        Double totalMark =0.0;
         if(markSheetRequest.getId() != null){
             markSheet = markSheetRepository.findByMarkIdAndIsActive(markSheetRequest.getId(),true);
             markSheet.setUpdatedBy(userId);
@@ -131,36 +132,46 @@ public class ScannerServiceImpl implements ScannerService {
         }
         if (markSheetRequest.getQ1() != null) {
             markSheet.setQ1(markSheetRequest.getQ1());
+            totalMark += markSheetRequest.getQ1();
         }
         if (markSheetRequest.getQ2() != null) {
             markSheet.setQ2(markSheetRequest.getQ2());
+            totalMark += markSheetRequest.getQ2();
         }
         if (markSheetRequest.getQ3() != null) {
             markSheet.setQ3(markSheetRequest.getQ3());
+            totalMark += markSheetRequest.getQ3();
         }
         if (markSheetRequest.getQ4() != null) {
             markSheet.setQ4(markSheetRequest.getQ4());
+            totalMark += markSheetRequest.getQ4();
         }
         if (markSheetRequest.getQ5() != null) {
             markSheet.setQ5(markSheetRequest.getQ5());
+            totalMark += markSheetRequest.getQ5();
         }
         if (markSheetRequest.getQ6() != null) {
             markSheet.setQ6(markSheetRequest.getQ6());
+            totalMark += markSheetRequest.getQ6();
         }
         if (markSheetRequest.getQ7() != null) {
             markSheet.setQ7(markSheetRequest.getQ7());
+            totalMark += markSheetRequest.getQ7();
         }
         if (markSheetRequest.getQ8() != null) {
             markSheet.setQ8(markSheetRequest.getQ8());
+            totalMark += markSheetRequest.getQ8();
         }
         if (markSheetRequest.getQ9() != null) {
             markSheet.setQ9(markSheetRequest.getQ9());
+            totalMark += markSheetRequest.getQ9();
         }
         if (markSheetRequest.getQ10() != null) {
             markSheet.setQ10(markSheetRequest.getQ10());
+            totalMark += markSheetRequest.getQ10();
         }
         if (markSheetRequest.getTotalMarks() != null) {
-            markSheet.setTotalMarks(markSheetRequest.getTotalMarks());
+            markSheet.setTotalMarks(totalMark);
         }
         MarkSheet markSheet1 = markSheetRepository.save(markSheet);
         logger.info("mark sheet added successfully");

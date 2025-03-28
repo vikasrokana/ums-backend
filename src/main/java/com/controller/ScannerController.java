@@ -6,6 +6,7 @@ import com.model.ExamFileRecord;
 import com.model.MarkSheet;
 import com.payload.request.MarkSheetRequest;
 import com.payload.response.MessageResponse;
+import com.service.MarkSheetService;
 import com.service.ScannerService;
 import io.swagger.annotations.ApiOperation;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -33,6 +34,9 @@ public class ScannerController {
     ScannerService scannerService;
     @Autowired
     AppUtils appUtils;
+
+    @Autowired
+    MarkSheetService markSheetService;
 
     @ApiOperation(value = "This api will be using to store the pdf in database")
     @RequestMapping(value = "/admin/upload-file", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -109,6 +113,18 @@ public class ScannerController {
         try {
             MarkSheet markSheet = scannerService.getMarksById(marksId);
             return ResponseEntity.ok(markSheet);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "This API will be used to get mark list of student")
+    @RequestMapping(value = {"/admin/get-marks-list"}, method = RequestMethod.GET)
+    public ResponseEntity<?> getMarksList() throws Exception {
+        try {
+            List<MarkSheet> markSheetList = markSheetService.getMarksList();
+            return ResponseEntity.ok(markSheetList);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new Exception(e.getMessage());
