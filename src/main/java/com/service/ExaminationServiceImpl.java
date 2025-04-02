@@ -4,9 +4,13 @@ import com.Utility.AppUtils;
 import com.exception.RecordNotFoundException;
 import com.model.Course;
 import com.model.Examination;
+import com.model.Faculties;
+import com.model.Student;
 import com.payload.request.ExaminationRequest;
 import com.payload.response.ExaminationResponse;
 import com.repository.ExaminationRepository;
+import com.repository.FacultiesRepository;
+import com.repository.StudentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +18,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ExaminationServiceImpl implements ExaminationService{
 
     @Autowired
     ExaminationRepository examinationRepository;
+    @Autowired
+    FacultiesRepository facultiesRepository;
 
     @Autowired
     AppUtils appUtils;
@@ -77,40 +85,57 @@ public class ExaminationServiceImpl implements ExaminationService{
     }
 
     @Override
-    public List<ExaminationResponse> getExaminationList(Integer pageNumber) {
+    public List<ExaminationResponse> getExaminationList(String role, Long userId, Integer pageNumber) {
         Pageable pageable = AppUtils.getPageRange(pageNumber);
-        List<ExaminationResponse> examinationResponseList = new ArrayList<>();
-        List<Examination> examinationList = examinationRepository.findByIsActive(true, pageable);
+        List<Examination> examinationList = new ArrayList<>();
+
+        switch (role.toLowerCase()) {
+            case "admin":
+                examinationList = examinationRepository.findByIsActive(true, pageable);
+                break;
+            case "faculty":
+                Faculties faculties = facultiesRepository.findByUserId(userId, true);
+                if (faculties == null) {
+                    logger.warn("No faculty found for userId: " + userId);
+                    return Collections.emptyList();
+                }
+                examinationList = examinationRepository.findByFacultyId(faculties.getId(), true);
+                break;
+            default:
+                logger.warn("Invalid role: " + role);
+                return Collections.emptyList();
+        }
+
         if (examinationList.isEmpty()) {
-            logger.warn("Examination list is empty");
-            return new ArrayList<>();
+            logger.warn("No examinations found for role: " + role + ", userId: " + userId);
+            return Collections.emptyList();
         }
 
-        for (Examination examination : examinationList) {
-            ExaminationResponse examinationResponse = new ExaminationResponse();
+        List<ExaminationResponse> examinationResponseList = examinationList.stream().map(exam -> {
+            ExaminationResponse response = new ExaminationResponse();
+            response.setId(exam.getId());
+            response.setExamName(exam.getExamName());
+            response.setCourseId(exam.getCourseId());
+            response.setSubjectId(exam.getSubjectId());
+            response.setFacultyId(exam.getFacultyId());
+            response.setDate(exam.getDate());
+            response.setTime(exam.getTime());
+            response.setDuration(exam.getDuration());
+            response.setRoom(exam.getRoom());
+            response.setStatus(exam.getStatus());
+            response.setTotalQuestions(exam.getTotalQuestions());
+            response.setCreatedBy(exam.getCreatedBy());
+            response.setUpdatedBy(exam.getUpdatedBy());
+            response.setCreatedOn(exam.getCreatedOn());
+            response.setUpdatedOn(exam.getUpdatedOn());
+            response.setIsActive(exam.getIsActive());
+            return response;
+        }).collect(Collectors.toList());
 
-            examinationResponse.setId(examination.getId());
-            examinationResponse.setExamName(examination.getExamName());
-            examinationResponse.setCourseId(examination.getCourseId());
-            examinationResponse.setSubjectId(examination.getSubjectId());
-            examinationResponse.setFacultyId(examination.getFacultyId());
-            examinationResponse.setDate(examination.getDate());
-            examinationResponse.setTime(examination.getTime());
-            examinationResponse.setDuration(examination.getDuration());
-            examinationResponse.setRoom(examination.getRoom());
-            examinationResponse.setStatus(examination.getStatus());
-            examinationResponse.setTotalQuestions(examination.getTotalQuestions());
-            examinationResponse.setCreatedBy(examination.getCreatedBy());
-            examinationResponse.setUpdatedBy(examination.getUpdatedBy());
-            examinationResponse.setCreatedOn(examination.getCreatedOn());
-            examinationResponse.setUpdatedOn(examination.getUpdatedOn());
-            examinationResponse.setIsActive(examination.getIsActive());
-
-            examinationResponseList.add(examinationResponse);
-        }
-        logger.info("get examination");
+        logger.info("Successfully retrieved " + examinationResponseList.size() + " examinations.");
         return examinationResponseList;
     }
+
 
     @Override
     public Boolean deleteExamination(Long examinationId) {

@@ -56,10 +56,12 @@ public class ExaminationController {
     }
 
     @ApiOperation(value = "This API will be used to get examination schedule list")
-    @RequestMapping(value = {"admin/get-examination-list"},method = RequestMethod.GET)
+    @RequestMapping(value = {"faculty/get-examination-list"},method = RequestMethod.GET)
     public ResponseEntity<?> getExaminationList(@RequestParam(value = "pageNumber", required = false)Integer pageNumber ,HttpServletRequest request) throws Exception {
         try {
-            List<ExaminationResponse> examinationResponseList = examinationService.getExaminationList(pageNumber);
+            String role = appUtils.getCurrentUserRole(request);
+            Long userId = appUtils.getUserId(request);
+            List<ExaminationResponse> examinationResponseList = examinationService.getExaminationList(role,userId, pageNumber);
             return ResponseEntity.ok(examinationResponseList);
 
         } catch (Exception e) {

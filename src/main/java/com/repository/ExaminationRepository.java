@@ -21,4 +21,6 @@ public interface ExaminationRepository extends JpaRepository<Examination, Long> 
 
     @Query(value = "select * from examination where id =:examId and is_active=:isActive", nativeQuery = true)
     Examination findByIdAndIsActive(Long examId, Boolean isActive);
+    @Query(value = "select * from examination where faculty_id =:facultyId and is_active=:isActive", nativeQuery = true)
+    List<Examination> findByFacultyId(Long facultyId,Boolean isActive);
 }

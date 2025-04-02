@@ -10,7 +10,7 @@ import java.util.List;
 public interface ExaminationService {
     Examination addExamination(ExaminationRequest examinationRequest, Long userId);
 
-    List<ExaminationResponse> getExaminationList(Integer pageNumber);
+    List<ExaminationResponse> getExaminationList(String role, Long userId, Integer pageNumber);
 
     Boolean deleteExamination(Long examinationId);
 
