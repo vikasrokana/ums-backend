@@ -23,7 +23,8 @@ public class AssignmentServiceImpl implements AssignmentService{
     @Autowired
     FacultiesRepository facultiesRepository;
     @Override
-    public Assignment uploadAssignment(Long id, Long courseId, Long subjectId, String title, String deadline, String section, Long marks, MultipartFile file, Long userId) throws IOException {
+    public Assignment uploadAssignment(Long id, Long courseId, Long subjectId, String title, String deadline,
+                                       String section, Long marks, MultipartFile file, Long userId,String description) throws IOException {
         Faculties faculties = facultiesRepository.findByUserId(userId, true);
         if (faculties == null) {
             throw new IllegalArgumentException("Faculty not found for userId: " + userId);
@@ -68,6 +69,7 @@ public class AssignmentServiceImpl implements AssignmentService{
         if (section != null) assignment.setSection(section);
         if (marks != null) assignment.setMarks(marks);
         if (deadline != null) assignment.setDeadline(deadline);
+        if(description != null) assignment.setDescription(description);
 
         assignment.setFacultyId(faculties.getId());
 

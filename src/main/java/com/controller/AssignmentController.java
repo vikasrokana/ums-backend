@@ -30,15 +30,16 @@ public class AssignmentController {
     public ResponseEntity<?> uploadAssignment(@RequestParam(value = "id",required = false) Long id,
             @RequestParam(value = "courseId", required = true) Long courseId,
                                               @RequestParam(value = "subjectId", required = false) Long subjectId,
+                                              @RequestParam(value = "description", required = false) String description,
                                               @RequestParam(value = "title", required = false) String title,
                                               @RequestParam(value = "deadline", required = false) String deadline,
                                               @RequestParam(value = "section", required = false) String section,
                                               @RequestParam(value = "marks", required = false) Long marks,
-                                              @RequestParam(value = "file", required = true) MultipartFile file, HttpServletRequest request) throws Exception {
+                                              @RequestParam(value = "file", required = false) MultipartFile file, HttpServletRequest request) throws Exception {
 
         try {
             Long userId = appUtils.getUserId(request);
-            Assignment assignment = assignmentService.uploadAssignment(id,courseId, subjectId,title,deadline,section, marks, file, userId);
+            Assignment assignment = assignmentService.uploadAssignment(id,courseId, subjectId,title,deadline,section, marks, file, userId,description);
             return ResponseEntity.ok(assignment);
         }
         catch (Exception e) {

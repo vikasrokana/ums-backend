@@ -16,6 +16,7 @@ public class Assignment {
     private Long courseId;
     private Long subjectId;
     private Long facultyId;
+    private String description;
     private String startDate;
     private String deadline;
     private Long marks;
