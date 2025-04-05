@@ -2,6 +2,7 @@ package com.controller;
 
 import com.Utility.AppUtils;
 import com.model.Assignment;
+import com.payload.response.AssignmentResponse;
 import com.service.AssignmentService;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @CrossOrigin("*")
@@ -43,6 +45,21 @@ public class AssignmentController {
             return ResponseEntity.ok(assignment);
         }
         catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "This API will be used to get assignment list")
+    @RequestMapping(value = {"student/get-assignment-list"},method = RequestMethod.GET)
+    public ResponseEntity<?> getAssignmentList(@RequestParam(value = "pageNumber", required = false)Integer pageNumber ,HttpServletRequest request) throws Exception {
+        try {
+            String role = appUtils.getCurrentUserRole(request);
+            Long userId = appUtils.getUserId(request);
+            List<AssignmentResponse> assignmentResponseList = assignmentService.getAssignmentList(role,userId, pageNumber);
+            return ResponseEntity.ok(assignmentResponseList);
+
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new Exception(e.getMessage());
         }

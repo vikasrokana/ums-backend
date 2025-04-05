@@ -3,25 +3,38 @@ package com.service;
 import com.Utility.AppUtils;
 import com.model.Assignment;
 import com.model.Faculties;
+import com.model.Student;
+import com.model.Subject;
+import com.payload.response.AssignmentResponse;
 import com.repository.AssignmentRepository;
 import com.repository.FacultiesRepository;
+import com.repository.StudentRepository;
+import com.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AssignmentServiceImpl implements AssignmentService{
 
     @Autowired
     AssignmentRepository assignmentRepository;
-
+    @Autowired
+    StudentRepository studentRepository;
     @Autowired
     FacultiesRepository facultiesRepository;
+
+    @Autowired
+    SubjectRepository subjectRepository;
     @Override
     public Assignment uploadAssignment(Long id, Long courseId, Long subjectId, String title, String deadline,
                                        String section, Long marks, MultipartFile file, Long userId,String description) throws IOException {
@@ -79,5 +92,55 @@ public class AssignmentServiceImpl implements AssignmentService{
 
         return assignmentRepository.save(assignment);
     }
+
+    @Override
+    public List<AssignmentResponse> getAssignmentList(String role, Long userId, Integer pageNumber) {
+        List<AssignmentResponse> assignmentResponseList = new ArrayList<>();
+        Pageable pageable = AppUtils.getPageRange(pageNumber);
+        List<Assignment> assignmentList = new ArrayList<>();
+
+        if (role.equalsIgnoreCase("faculty")) {
+            assignmentList = assignmentRepository.findByUserId(userId, true);
+        }
+
+        if (role.equalsIgnoreCase("student")) {
+            Student student = studentRepository.findByUserIdAndIsActive(userId, true);
+            if (student != null) {
+                List<Subject> subjectList = subjectRepository.findByCourseIdAndSem(
+                        student.getCourseId(), student.getSemOrYear(), true, pageable
+                );
+
+                List<Long> subjectIds = subjectList.stream()
+                        .map(Subject::getId)
+                        .collect(Collectors.toList());
+
+                if (!subjectIds.isEmpty()) {
+                    assignmentList = assignmentRepository.findBySubjectIdInAndIsActive(subjectIds, true);
+                }
+            }
+        }
+
+        for (Assignment assignment : assignmentList) {
+            AssignmentResponse assignmentResponse = new AssignmentResponse();
+            assignmentResponse.setId(assignment.getId());
+            assignmentResponse.setTitle(assignment.getTitle());
+            assignmentResponse.setCourseId(assignment.getCourseId());
+            assignmentResponse.setSubjectId(assignment.getSubjectId());
+            assignmentResponse.setFacultyId(assignment.getFacultyId());
+            assignmentResponse.setDescription(assignment.getDescription());
+            assignmentResponse.setStartDate(assignment.getStartDate());
+            assignmentResponse.setDeadline(assignment.getDeadline());
+            assignmentResponse.setMarks(assignment.getMarks());
+            assignmentResponse.setSection(assignment.getSection());
+            assignmentResponse.setAssignmentUrl(assignment.getAssignmentUrl());
+            assignmentResponse.setCreatedBy(assignment.getCreatedBy());
+            assignmentResponse.setUpdatedBy(assignment.getUpdatedBy());
+            assignmentResponse.setCreatedOn(assignment.getCreatedOn());
+            assignmentResponseList.add(assignmentResponse);
+        }
+
+        return assignmentResponseList;
+    }
+
 
 }
