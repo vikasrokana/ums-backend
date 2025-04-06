@@ -2,7 +2,9 @@ package com.controller;
 
 import com.Utility.AppUtils;
 import com.model.Assignment;
+import com.model.Course;
 import com.payload.response.AssignmentResponse;
+import com.payload.response.MessageResponse;
 import com.service.AssignmentService;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -59,6 +61,34 @@ public class AssignmentController {
             List<AssignmentResponse> assignmentResponseList = assignmentService.getAssignmentList(role,userId, pageNumber);
             return ResponseEntity.ok(assignmentResponseList);
 
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "This API will be using to Delete Assignment")
+    @RequestMapping(value = {"/faculty/delete-assignment"}, method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteAssignment(@RequestParam(value = "assignmentId",required = true) Long assignmentId) throws Exception {
+        try{
+            Boolean isDeleted = assignmentService.deleteAssignment(assignmentId);
+            if(isDeleted){
+                return ResponseEntity.ok(new MessageResponse(true,"Assignment deleted successfully"));
+            } else {
+                return ResponseEntity.ok(new MessageResponse(false,"assignment not found"));
+            }
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "This API will be used to get Assignment by id")
+    @RequestMapping(value = {"/faculty/get-assignment-by-id"}, method = RequestMethod.GET)
+    public ResponseEntity<?> getAssignmentById(@RequestParam(value = "assignmentId", required = true) Long assignmentId) throws Exception {
+        try {
+            Assignment assignment = assignmentService.getAssignmentById(assignmentId);
+            return ResponseEntity.ok(assignment);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new Exception(e.getMessage());

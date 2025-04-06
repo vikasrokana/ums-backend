@@ -2,10 +2,12 @@ package com.repository;
 
 import com.model.Assignment;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -19,5 +21,8 @@ public interface AssignmentRepository extends JpaRepository<Assignment,Long> {
     @Query("SELECT a FROM Assignment a WHERE a.subjectId IN :subjectIds AND a.isActive = :isActive")
     List<Assignment> findBySubjectIdInAndIsActive(@Param("subjectIds") List<Long> subjectIds,
                                                   @Param("isActive") Boolean isActive);
-
+ @Transactional
+ @Modifying
+ @Query(value = "Update assignment set is_active =0 where id = :assignmentId",nativeQuery = true)
+ Integer deleteAssignment(Long assignmentId);
 }

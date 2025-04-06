@@ -1,15 +1,15 @@
 package com.service;
 
 import com.Utility.AppUtils;
-import com.model.Assignment;
-import com.model.Faculties;
-import com.model.Student;
-import com.model.Subject;
+import com.exception.RecordNotFoundException;
+import com.model.*;
 import com.payload.response.AssignmentResponse;
 import com.repository.AssignmentRepository;
 import com.repository.FacultiesRepository;
 import com.repository.StudentRepository;
 import com.repository.SubjectRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,6 +35,8 @@ public class AssignmentServiceImpl implements AssignmentService{
 
     @Autowired
     SubjectRepository subjectRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(AssignmentServiceImpl.class);
     @Override
     public Assignment uploadAssignment(Long id, Long courseId, Long subjectId, String title, String deadline,
                                        String section, Long marks, MultipartFile file, Long userId,String description) throws IOException {
@@ -140,6 +142,26 @@ public class AssignmentServiceImpl implements AssignmentService{
         }
 
         return assignmentResponseList;
+    }
+
+    @Override
+    public Boolean deleteAssignment(Long assignmentId) {
+        Integer isDeleted = assignmentRepository.deleteAssignment(assignmentId);
+        if( isDeleted != 0){
+            logger.info("Assignment deleted Successfully");
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Assignment getAssignmentById(Long assignmentId) throws RecordNotFoundException {
+        Assignment assignment = assignmentRepository.findByIdAndIsActive(assignmentId,true);
+        if(null == assignment){
+            throw new RecordNotFoundException("Assignment not found with id:: " + assignmentId);
+        }
+        logger.info("Get Assignment using id");
+        return assignment;
     }
 
 
