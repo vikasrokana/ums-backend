@@ -12,4 +12,14 @@ public class ClassScheduleRequest {
     private String startTime;
     private String endTime;
     private String roomNo;
+
+    // Rescheduling fields
+    private String rescheduleDate;
+    private String rescheduleStartTime;
+    private String rescheduleEndTime;
+    private String rescheduleRoomNo;
+    private String rescheduleReason;
+
+    private Boolean isRescheduled = false;
+    private Boolean isApproved = null;
 }

@@ -37,6 +37,17 @@ public class ClassScheduleServiceImpl implements ClassScheduleService{
             classSchedule = classScheduleRepository.findById(classScheduleRequest.getId()).get();
             classSchedule.setUpdatedOn(AppUtils.getCurrentIstTime());
             classSchedule.setUpdatedBy(userId);
+
+            //Handle Reschedule logic
+            if (Boolean.TRUE.equals(classScheduleRequest.getIsRescheduled())) {
+                classSchedule.setRescheduleDate(classScheduleRequest.getRescheduleDate());
+                classSchedule.setRescheduleStartTime(classScheduleRequest.getRescheduleStartTime());
+                classSchedule.setRescheduleEndTime(classScheduleRequest.getRescheduleEndTime());
+                classSchedule.setRescheduleRoomNo(classScheduleRequest.getRescheduleRoomNo());
+                classSchedule.setRescheduleReason(classScheduleRequest.getRescheduleReason());
+                classSchedule.setIsRescheduled(true);
+                classSchedule.setIsApproved(false); // pending admin approval
+            }
         }
         else{
             classSchedule.setCreatedOn(AppUtils.getCurrentIstTime());
@@ -68,7 +79,7 @@ public class ClassScheduleServiceImpl implements ClassScheduleService{
 
         }
         ClassSchedule classSchedule1 = classScheduleRepository.save(classSchedule);
-        logger.info("course added successfully");
+        logger.info("class schedule added successfully");
         return classSchedule1;
     }
 
@@ -93,6 +104,41 @@ public class ClassScheduleServiceImpl implements ClassScheduleService{
 
         } else {
             classScheduleList = classScheduleRepository.findByIsActive(true, pageable);
+        }
+
+        if (classScheduleList.isEmpty()) {
+            logger.warn("Class schedule list is not found");
+            return Collections.emptyList();
+        }
+
+        // Convert ClassSchedule to ClassScheduleResponse
+        classScheduleResponseList = classScheduleList.stream().map(this::mapToResponse).collect(Collectors.toList());
+
+        logger.info("Successfully fetched class schedule list");
+        return classScheduleResponseList;
+    }
+
+    @Override
+    public List<ClassScheduleResponse> getRescheduleClassList(Long userId, String role, Integer pageNumber) throws RecordNotFoundException {
+        Pageable pageable = AppUtils.getPageRange(pageNumber);
+        List<ClassScheduleResponse> classScheduleResponseList;
+
+        List<ClassSchedule> classScheduleList;
+
+        if ("student".equals(role)) {
+            Student student = studentRepository.findByUserIdAndIsActive(userId, true);
+            List<Subject> subjectList = subjectRepository.findByCourseIdAndSem(student.getCourseId(), student.getSemOrYear(), true, pageable);
+
+            // Fetch class schedules for all subjects in a single query to reduce database calls
+            List<Long> subjectIds = subjectList.stream().map(Subject::getId).collect(Collectors.toList());
+            classScheduleList = classScheduleRepository.findByCourseIdAndIsRescheduledAndSubjectIdIn(student.getCourseId(), subjectIds, true);
+
+        } else if ("faculty".equals(role)) {
+            Faculties faculties = facultiesRepository.findByUserId(userId, true);
+            classScheduleList = classScheduleRepository.findByFacultyIdAndIsRescheduled(faculties.getId(),true, true);
+
+        } else {
+            classScheduleList = classScheduleRepository.findByIsActiveAndIsRescheduled(true,true, pageable);
         }
 
         if (classScheduleList.isEmpty()) {
@@ -166,6 +212,34 @@ public class ClassScheduleServiceImpl implements ClassScheduleService{
             return true;
         }
         return false;
+    }
+
+
+    public ClassSchedule approveOrRejectRescheduleClass(ClassScheduleRequest classScheduleRequest, Long userId) {
+        ClassSchedule classSchedule = new ClassSchedule();
+        if(classScheduleRequest.getId() != null){
+            classSchedule = classScheduleRepository.findById(classScheduleRequest.getId()).get();
+            classSchedule.setUpdatedOn(AppUtils.getCurrentIstTime());
+            classSchedule.setUpdatedBy(userId);
+
+            //Handle Reschedule logic
+            if (Boolean.TRUE.equals(classScheduleRequest.getIsApproved())) {
+                classSchedule.setIsApproved(classScheduleRequest.getIsApproved()); // pending admin approval
+            }
+            else{
+//              classSchedule.setRescheduleDate(null);
+//              classSchedule.setRescheduleStartTime(null);
+//              classSchedule.setRescheduleEndTime(null);
+//              classSchedule.setRescheduleRoomNo(null);
+//              classSchedule.setRescheduleReason(null);
+                classSchedule.setIsRescheduled(false);
+                classSchedule.setIsApproved(true);
+            }
+        }
+
+        ClassSchedule classSchedule1 = classScheduleRepository.save(classSchedule);
+        logger.info("class aprroved or rejected successfully");
+        return classSchedule1;
     }
 
 }
