@@ -19,6 +19,17 @@ public class ClassSchedule {
     private String startTime;
     private String endTime;
     private String roomNo;
+
+    // Rescheduling fields
+    private String rescheduleDate;
+    private String rescheduleStartTime;
+    private String rescheduleEndTime;
+    private String rescheduleRoomNo;
+    private String rescheduleReason;
+
+    private Boolean isRescheduled = false;
+    private Boolean isApproved = null; // null = pending, true = approved, false = rejected
+
     private Long createdBy;
     private Long updatedBy;
     private Timestamp createdOn;

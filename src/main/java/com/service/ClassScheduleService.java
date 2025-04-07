@@ -9,7 +9,8 @@ import java.util.List;
 
 public interface ClassScheduleService {
     ClassSchedule addClassSchedule(ClassScheduleRequest classScheduleRequest, Long userId);
+    ClassSchedule approveOrRejectRescheduleClass(ClassScheduleRequest classScheduleRequest, Long userId);
     List<ClassScheduleResponse> getClassSchedule(Long userId, String role, Integer pageNumber) throws RecordNotFoundException;
-
+    List<ClassScheduleResponse> getRescheduleClassList(Long userId, String role,Integer pageNumber) throws RecordNotFoundException;
     Boolean deleteClassSchedule(Long classScheduleId);
 }

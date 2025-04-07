@@ -68,6 +68,21 @@ public class ClassScheduleController {
         }
     }
 
+    @ApiOperation(value = "This API will be used to get reschedule class list")
+    @RequestMapping(value = {"/student/get-class-reschedule-list"},method = RequestMethod.GET)
+    public ResponseEntity<?> getRescheduleClassList(@RequestParam(value = "pageNumber",required = false)Integer pageNumber, HttpServletRequest request) throws Exception {
+        try {
+            String role = appUtils.getCurrentUserRole(request);
+            Long userId = appUtils.getUserId(request);
+            List<ClassScheduleResponse> rescheduleClassResponseList = classScheduleService.getRescheduleClassList(userId,role,pageNumber);
+            return ResponseEntity.ok(rescheduleClassResponseList);
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new Exception(e.getMessage());
+        }
+    }
+
     @ApiOperation(value = "This API will be using to Delete class Schedule")
     @RequestMapping(value = {"/admin/delete-class-schedule"}, method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteSubject(@RequestParam(value = "classScheduleId",required = true) Long classScheduleId) throws Exception {
@@ -78,6 +93,20 @@ public class ClassScheduleController {
             } else {
                 return ResponseEntity.ok(new MessageResponse(false,"Class schedule not found"));
             }
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            throw new Exception(e.getMessage());
+        }
+    }
+
+
+    @ApiOperation(value = "This API will be used to aprrove or reject reschedule class")
+    @RequestMapping(value = {"/admin/approve-or-reject-reschedule"},method = RequestMethod.POST)
+    public ResponseEntity<?> approveOrRejectRescheduleClass(@RequestBody ClassScheduleRequest classScheduleRequest, HttpServletRequest request) throws Exception {
+        try{
+            Long userId =appUtils.getUserId(request);
+            ClassSchedule classSchedule = classScheduleService.approveOrRejectRescheduleClass(classScheduleRequest,userId);
+            return ResponseEntity.ok(classSchedule);
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             throw new Exception(e.getMessage());
