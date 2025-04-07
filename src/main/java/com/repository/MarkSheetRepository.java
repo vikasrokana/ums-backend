@@ -13,4 +13,6 @@ public interface MarkSheetRepository extends JpaRepository<MarkSheet,Long> {
     MarkSheet findByMarkIdAndIsActive(Long id, Boolean isActive);
     @Query(value = "select * from mark_sheet where is_active=:isActive", nativeQuery = true)
     List<MarkSheet> findByIsActive(Boolean isActive);
+    @Query(value = "select * from mark_sheet where created_by =:userId and is_active=:isActive", nativeQuery = true)
+    List<MarkSheet> findByUserId(Long userId, Boolean isActive);
 }

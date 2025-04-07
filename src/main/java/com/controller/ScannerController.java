@@ -57,7 +57,7 @@ public class ScannerController {
     }
 
     @ApiOperation(value = "This API will be used to get student exam sheet list")
-    @RequestMapping(value = {"admin/get-exam-sheet-list"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"faculty/get-exam-sheet-list"}, method = RequestMethod.GET)
     public ResponseEntity<?> getExamFileList(@RequestParam(value = "courseId",required = false) Long courseId,
                                              @RequestParam(value = "subjectId",required = false) Long subjectId ) throws Exception {
         try {
@@ -70,7 +70,7 @@ public class ScannerController {
     }
 
     @ApiOperation(value = "This API will be used to get student pdf by id")
-    @RequestMapping(value = {"/admin/get-exam-sheet-by-id"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/faculty/get-exam-sheet-by-id"}, method = RequestMethod.GET)
     public ResponseEntity<?> getExamSheetById(@RequestParam(value = "sheetId", required = true) Long sheetId) throws Exception {
         try {
             ExamFileRecord examFileRecord = scannerService.getExamSheetById(sheetId);
@@ -82,7 +82,7 @@ public class ScannerController {
     }
 
     @ApiOperation(value = "This API Will be used to add mark of student")
-    @RequestMapping(value = {"/admin/add-marks"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/faculty/add-marks"}, method = RequestMethod.POST)
     public ResponseEntity<?> addMarks(@RequestBody MarkSheetRequest markSheetRequest, HttpServletRequest request) throws Exception {
         try {
             Long userId = appUtils.getUserId(request);
@@ -95,7 +95,7 @@ public class ScannerController {
     }
 
     @ApiOperation(value = "This API Will be used to update mark of student")
-    @RequestMapping(value = {"/admin/update-marks"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/faculty/update-marks"}, method = RequestMethod.POST)
     public ResponseEntity<?> updateMarks(@RequestBody MarkSheetRequest markSheetRequest, HttpServletRequest request) throws Exception {
         try {
             Long userId = appUtils.getUserId(request);
@@ -108,7 +108,7 @@ public class ScannerController {
     }
 
     @ApiOperation(value = "This API will be used to get mark list of student by id")
-    @RequestMapping(value = {"/admin/get-mark-by-id"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/faculty/get-mark-by-id"}, method = RequestMethod.GET)
     public ResponseEntity<?> getMarksById(@RequestParam(value = "marksId", required = true) Long marksId) throws Exception {
         try {
             MarkSheet markSheet = scannerService.getMarksById(marksId);
@@ -120,10 +120,12 @@ public class ScannerController {
     }
 
     @ApiOperation(value = "This API will be used to get mark list of student")
-    @RequestMapping(value = {"/admin/get-marks-list"}, method = RequestMethod.GET)
-    public ResponseEntity<?> getMarksList() throws Exception {
+    @RequestMapping(value = {"/faculty/get-marks-list"}, method = RequestMethod.GET)
+    public ResponseEntity<?> getMarksList(HttpServletRequest request) throws Exception {
         try {
-            List<MarkSheet> markSheetList = markSheetService.getMarksList();
+            String role = appUtils.getCurrentUserRole(request);
+            Long userId = appUtils.getUserId(request);
+            List<MarkSheet> markSheetList = markSheetService.getMarksList(role,userId);
             return ResponseEntity.ok(markSheetList);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

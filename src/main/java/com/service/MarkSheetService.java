@@ -5,5 +5,5 @@ import com.model.MarkSheet;
 import java.util.List;
 
 public interface MarkSheetService {
-    List<MarkSheet> getMarksList();
+    List<MarkSheet> getMarksList(String role, Long userId);
 }

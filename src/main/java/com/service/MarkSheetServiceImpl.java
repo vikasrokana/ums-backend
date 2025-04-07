@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -16,14 +17,22 @@ public class MarkSheetServiceImpl implements MarkSheetService{
     @Autowired
     MarkSheetRepository markSheetRepository;
     @Override
-    public List<MarkSheet> getMarksList() {
-        List<MarkSheet> markSheetList = new ArrayList<>();
-        List<MarkSheet> studentMarks = markSheetRepository.findByIsActive(true);
-        if(studentMarks.isEmpty()){
-            logger.warn("student Marks list is empty");
-            return new ArrayList<>();
+    public List<MarkSheet> getMarksList(String role, Long userId) {
+        List<MarkSheet> studentMarks = new ArrayList<>();
+
+        if ("admin".equals(role)) {
+            studentMarks = markSheetRepository.findByIsActive(true);
+        } else if ("faculty".equals(role)) {
+            studentMarks = markSheetRepository.findByUserId(userId, true);
         }
-        for(MarkSheet ms: studentMarks){
+
+        if (studentMarks == null || studentMarks.isEmpty()) {
+            logger.warn("Student marks list is empty");
+            return Collections.emptyList();
+        }
+
+        List<MarkSheet> markSheetList = new ArrayList<>();
+        for (MarkSheet ms : studentMarks) {
             MarkSheet markSheet = new MarkSheet();
             markSheet.setId(ms.getId());
             markSheet.setExamRecordId(ms.getExamRecordId());
@@ -46,9 +55,11 @@ public class MarkSheetServiceImpl implements MarkSheetService{
             markSheet.setCreatedOn(ms.getCreatedOn());
             markSheet.setUpdatedOn(ms.getUpdatedOn());
             markSheetList.add(markSheet);
-
         }
-        logger.info("get student marks list");
+
+        logger.info("Fetched student marks list successfully");
         return markSheetList;
     }
+
+
 }
