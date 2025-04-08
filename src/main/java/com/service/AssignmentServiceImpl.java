@@ -4,10 +4,8 @@ import com.Utility.AppUtils;
 import com.exception.RecordNotFoundException;
 import com.model.*;
 import com.payload.response.AssignmentResponse;
-import com.repository.AssignmentRepository;
-import com.repository.FacultiesRepository;
-import com.repository.StudentRepository;
-import com.repository.SubjectRepository;
+import com.payload.response.AssignmentSubmissionResponse;
+import com.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +33,9 @@ public class AssignmentServiceImpl implements AssignmentService{
 
     @Autowired
     SubjectRepository subjectRepository;
+
+    @Autowired
+    AssignmentSubmissionRepository assignmentSubmissionRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(AssignmentServiceImpl.class);
     @Override
@@ -162,6 +163,98 @@ public class AssignmentServiceImpl implements AssignmentService{
         }
         logger.info("Get Assignment using id");
         return assignment;
+    }
+
+    @Override
+    public AssignmentSubmission assignmentSubmission(Long id, Long assignmentId, MultipartFile file, Long userId) throws IOException {
+        AssignmentSubmission assignmentSubmission;
+
+        if (id != null) {
+            // Update existing submission
+            assignmentSubmission = assignmentSubmissionRepository.findByIdAndIsActive(id, true);
+            if (assignmentSubmission == null) {
+                throw new IllegalArgumentException("Assignment submission not found with id: " + id);
+            }
+            assignmentSubmission.setUpdatedBy(userId);
+            assignmentSubmission.setUpdatedOn(AppUtils.getCurrentIstTime());
+        } else {
+            // Create new submission
+            assignmentSubmission = new AssignmentSubmission();
+            assignmentSubmission.setCreatedOn(AppUtils.getCurrentIstTime());
+            assignmentSubmission.setIsActive(true);
+        }
+
+        // Save the uploaded file
+        if (file != null && !file.isEmpty()) {
+            String originalFilename = file.getOriginalFilename();
+            if (originalFilename == null || !originalFilename.contains(".")) {
+                throw new IllegalArgumentException("Invalid file name.");
+            }
+
+            String extension = originalFilename.substring(originalFilename.lastIndexOf('.')); // e.g., ".pdf"
+            String filenameWithoutExtension = originalFilename.substring(0, originalFilename.lastIndexOf('.'));
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            String fileName = filenameWithoutExtension + "_" + timestamp + extension;
+
+            String storagePath = "C:\\Users\\User\\Documents\\upload\\";
+            File dest = new File(storagePath + fileName);
+            file.transferTo(dest);
+
+            assignmentSubmission.setSubmissionUrl(dest.getAbsolutePath());
+        }
+
+        // Fetch student by userId
+        Student student = studentRepository.findByUserIdAndIsActive(userId, true);
+        if (student == null) {
+            throw new IllegalArgumentException("Student not found for userId: " + userId);
+        }
+
+        assignmentSubmission.setStudentId(student.getId());
+
+        if (assignmentId != null) {
+            assignmentSubmission.setAssignmentId(assignmentId);
+        }
+
+        // Set today's date as submission timestamp
+        String strDate = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+        assignmentSubmission.setSubmittedOn(strDate);
+
+        return assignmentSubmissionRepository.save(assignmentSubmission);
+    }
+
+    @Override
+    public List<AssignmentSubmissionResponse> getAssignmentSubmissionList(String role, Long userId, Integer pageNumber) {
+        List<AssignmentSubmissionResponse> assignmentSubmissionResponseList = new ArrayList<>();
+        Pageable pageable = AppUtils.getPageRange(pageNumber);
+
+        if ("faculty".equalsIgnoreCase(role)) {
+            List<Assignment> assignmentList = assignmentRepository.findByUserId(userId, true);
+            for (Assignment assignment : assignmentList) {
+                List<AssignmentSubmission> submissions = assignmentSubmissionRepository.findAllByAssignmentIdAndIsActive(assignment.getId(), true, pageable);
+                for (AssignmentSubmission submission : submissions) {
+                    AssignmentSubmissionResponse response = new AssignmentSubmissionResponse();
+                    response.setId(submission.getId());
+                    response.setAssignmentId(submission.getAssignmentId());
+                    response.setStudentId(submission.getStudentId());
+                    response.setSubmissionUrl(submission.getSubmissionUrl());
+                    response.setRemarks(submission.getRemarks());
+                    response.setObtainedMarks(submission.getObtainedMarks());
+                    response.setSubmittedOn(submission.getSubmittedOn());
+                    response.setIsLateSubmission(submission.getIsLateSubmission());
+                    response.setEvaluatedBy(submission.getEvaluatedBy());
+                    response.setEvaluatedOn(submission.getEvaluatedOn());
+                    response.setUpdatedBy(submission.getUpdatedBy());
+                    response.setCreatedOn(submission.getCreatedOn());
+                    response.setUpdatedOn(submission.getUpdatedOn());
+
+                    assignmentSubmissionResponseList.add(response);
+                }
+            }
+        }
+
+        // You can add "student" role handling here if needed.
+
+        return assignmentSubmissionResponseList;
     }
 
 

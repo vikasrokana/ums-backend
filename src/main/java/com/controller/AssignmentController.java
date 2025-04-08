@@ -2,8 +2,9 @@ package com.controller;
 
 import com.Utility.AppUtils;
 import com.model.Assignment;
-import com.model.Course;
+import com.model.AssignmentSubmission;
 import com.payload.response.AssignmentResponse;
+import com.payload.response.AssignmentSubmissionResponse;
 import com.payload.response.MessageResponse;
 import com.service.AssignmentService;
 import io.swagger.annotations.ApiOperation;
@@ -89,6 +90,39 @@ public class AssignmentController {
         try {
             Assignment assignment = assignmentService.getAssignmentById(assignmentId);
             return ResponseEntity.ok(assignment);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "This api will be submission the assignment by student")
+    @RequestMapping(value = "/student/submission-assignment", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> submissionAssignment(@RequestParam(value = "id",required = false) Long id,
+                                              @RequestParam(value = "assignmentId", required = true) Long assignmentId,
+                                              @RequestParam(value = "file", required = false) MultipartFile file, HttpServletRequest request) throws Exception {
+
+        try {
+            Long userId = appUtils.getUserId(request);
+            AssignmentSubmission assignmentSubmission = assignmentService.assignmentSubmission(id,assignmentId, file, userId);
+            return ResponseEntity.ok(assignmentSubmission);
+        }
+        catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "This API will be used to get submission assignment list")
+    @RequestMapping(value = {"faculty/get-submission-assignment-list"},method = RequestMethod.GET)
+    public ResponseEntity<?> getSubmissionAssignmentList(@RequestParam(value = "pageNumber", required = false)Integer pageNumber,
+                                                         HttpServletRequest request) throws Exception {
+        try {
+            String role = appUtils.getCurrentUserRole(request);
+            Long userId = appUtils.getUserId(request);
+            List<AssignmentSubmissionResponse> assignmentServiceAssignmentList = assignmentService.getAssignmentSubmissionList(role, userId, pageNumber);
+            return ResponseEntity.ok(assignmentServiceAssignmentList);
+
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new Exception(e.getMessage());

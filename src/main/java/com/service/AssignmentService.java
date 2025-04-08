@@ -2,7 +2,9 @@ package com.service;
 
 import com.exception.RecordNotFoundException;
 import com.model.Assignment;
+import com.model.AssignmentSubmission;
 import com.payload.response.AssignmentResponse;
+import com.payload.response.AssignmentSubmissionResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -16,4 +18,8 @@ public interface AssignmentService {
     Boolean deleteAssignment(Long assignmentId);
 
     Assignment getAssignmentById(Long assignmentId) throws RecordNotFoundException;
+
+    AssignmentSubmission assignmentSubmission(Long id, Long assignmentId, MultipartFile file, Long userId) throws IOException;
+
+    List<AssignmentSubmissionResponse> getAssignmentSubmissionList(String role, Long userId, Integer pageNumber);
 }
