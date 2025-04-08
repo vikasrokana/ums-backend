@@ -2,6 +2,7 @@ package com.controller;
 
 import com.Utility.AppUtils;
 import com.model.ClassSchedule;
+import com.payload.request.ApproveOrRejectClassRescheduleRequest;
 import com.payload.request.ClassScheduleRequest;
 import com.payload.response.ClassScheduleResponse;
 import com.payload.response.MessageResponse;
@@ -27,12 +28,25 @@ public class ClassScheduleController {
     @Autowired
     AppUtils appUtils;
 
-    @ApiOperation(value = "This API Will be used to add class schedule")
+    @ApiOperation(value = "This API Will be used to add class schedule ")
     @RequestMapping(value = {"/admin/add-class-schedule"},method = RequestMethod.POST)
     public ResponseEntity<?> addClassSchedule(@RequestBody ClassScheduleRequest classScheduleRequest, HttpServletRequest request) throws Exception {
         try{
-            Long userId =appUtils.getUserId(request);
+            Long userId = appUtils.getUserId(request);
             ClassSchedule classSchedule = classScheduleService.addClassSchedule(classScheduleRequest,userId);
+            return ResponseEntity.ok(classSchedule);
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "This API Will be used to reshedule the class")
+    @RequestMapping(value = {"/faculty/add-reschedule-class"},method = RequestMethod.POST)
+    public ResponseEntity<?> addRescheduleClass(@RequestBody ClassScheduleRequest classScheduleRequest, HttpServletRequest request) throws Exception {
+        try{
+            Long userId = appUtils.getUserId(request);
+            ClassSchedule classSchedule = classScheduleService.addClassReschedule(classScheduleRequest,userId);
             return ResponseEntity.ok(classSchedule);
         }catch (Exception e){
             logger.error(e.getMessage(),e);
@@ -102,10 +116,10 @@ public class ClassScheduleController {
 
     @ApiOperation(value = "This API will be used to aprrove or reject reschedule class")
     @RequestMapping(value = {"/admin/approve-or-reject-reschedule"},method = RequestMethod.POST)
-    public ResponseEntity<?> approveOrRejectRescheduleClass(@RequestBody ClassScheduleRequest classScheduleRequest, HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> approveOrRejectRescheduleClass(@RequestBody ApproveOrRejectClassRescheduleRequest approveOrRejectClassRescheduleRequest, HttpServletRequest request) throws Exception {
         try{
             Long userId =appUtils.getUserId(request);
-            ClassSchedule classSchedule = classScheduleService.approveOrRejectRescheduleClass(classScheduleRequest,userId);
+            ClassSchedule classSchedule = classScheduleService.approveOrRejectRescheduleClass(approveOrRejectClassRescheduleRequest,userId);
             return ResponseEntity.ok(classSchedule);
         }catch (Exception e){
             logger.error(e.getMessage(),e);

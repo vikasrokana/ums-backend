@@ -21,5 +21,5 @@ public class ClassScheduleRequest {
     private String rescheduleReason;
 
     private Boolean isRescheduled = false;
-    private Boolean isApproved = null;
+    private Boolean isApproved = null;  //null-pending, true-approved, false-rejected
 }
