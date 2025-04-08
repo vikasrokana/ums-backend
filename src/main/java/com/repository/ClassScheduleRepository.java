@@ -22,15 +22,15 @@ public interface ClassScheduleRepository extends JpaRepository<ClassSchedule,Lon
     @Query(value = "Select * from class_schedule where faculty_id =:id and is_active =:isActive", nativeQuery = true)
     List<ClassSchedule> findByFacultyId(Long id, Boolean isActive);
 
-    @Query(value = "Select * from class_schedule where is_rescheduled =:isRescheduled and is_active =:isActive", nativeQuery = true)
-    List<ClassSchedule> findByIsActiveAndIsRescheduled(Boolean isRescheduled, Boolean isActive, Pageable pageable);
-    @Query(value = "Select * from class_schedule where faculty_id =:id and is_rescheduled =:isRescheduled and is_active =:isActive", nativeQuery = true)
-    List<ClassSchedule> findByFacultyIdAndIsRescheduled(Long id,Boolean isRescheduled, Boolean isActive);
+    @Query(value = "Select * from class_schedule where is_rescheduled = 1 and is_approved IS NULL And is_active =:isActive", nativeQuery = true)
+    List<ClassSchedule> findByIsActiveAndIsRescheduledAndIsApprovedNull( Boolean isActive, Pageable pageable);
+    @Query(value = "Select * from class_schedule where faculty_id =:id and is_rescheduled = 1 and is_active =:isActive", nativeQuery = true)
+    List<ClassSchedule> findByFacultyIdAndIsRescheduled(Long id, Boolean isActive);
     @Query(value = "SELECT * FROM class_schedule WHERE course_id = :courseId AND subject_id IN (:subjectIds) AND is_active = :isActive", nativeQuery = true)
     List<ClassSchedule> findByCourseIdAndSubjectIdIn(Long courseId, List<Long> subjectIds, Boolean isActive);
 
-    @Query(value = "SELECT * FROM class_schedule WHERE course_id = :courseId AND is_rescheduled = true subject_id IN (:subjectIds) AND is_active = :isActive", nativeQuery = true)
-    List<ClassSchedule> findByCourseIdAndIsRescheduledAndSubjectIdIn(Long courseId, List<Long> subjectIds, Boolean isActive);
+    @Query(value = "SELECT * FROM class_schedule WHERE course_id = :courseId AND is_rescheduled = 1 AND is_approved = 1 AND subject_id IN (:subjectIds) AND is_active = :isActive", nativeQuery = true)
+    List<ClassSchedule> findByCourseIdAndIsRescheduledAndIsApprovedAndSubjectIdIn(Long courseId, List<Long> subjectIds, Boolean isActive);
 //    @Query(value = "SELECT c FROM ClassSchedule c WHERE c.is_rescheduled = true AND c.is_approved = null AND is_active = :isActive", nativeQuery = true)
 //    List<ClassSchedule> findPendingRescheduledClasses(Boolean isActive,Pageable pageable);
 }

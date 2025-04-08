@@ -3,6 +3,7 @@ package com.service;
 import com.Utility.AppUtils;
 import com.exception.RecordNotFoundException;
 import com.model.*;
+import com.payload.request.ApproveOrRejectClassRescheduleRequest;
 import com.payload.request.ClassScheduleRequest;
 import com.payload.response.ClassScheduleResponse;
 import com.repository.*;
@@ -37,17 +38,6 @@ public class ClassScheduleServiceImpl implements ClassScheduleService{
             classSchedule = classScheduleRepository.findById(classScheduleRequest.getId()).get();
             classSchedule.setUpdatedOn(AppUtils.getCurrentIstTime());
             classSchedule.setUpdatedBy(userId);
-
-            //Handle Reschedule logic
-            if (Boolean.TRUE.equals(classScheduleRequest.getIsRescheduled())) {
-                classSchedule.setRescheduleDate(classScheduleRequest.getRescheduleDate());
-                classSchedule.setRescheduleStartTime(classScheduleRequest.getRescheduleStartTime());
-                classSchedule.setRescheduleEndTime(classScheduleRequest.getRescheduleEndTime());
-                classSchedule.setRescheduleRoomNo(classScheduleRequest.getRescheduleRoomNo());
-                classSchedule.setRescheduleReason(classScheduleRequest.getRescheduleReason());
-                classSchedule.setIsRescheduled(true);
-                classSchedule.setIsApproved(false); // pending admin approval
-            }
         }
         else{
             classSchedule.setCreatedOn(AppUtils.getCurrentIstTime());
@@ -80,6 +70,28 @@ public class ClassScheduleServiceImpl implements ClassScheduleService{
         }
         ClassSchedule classSchedule1 = classScheduleRepository.save(classSchedule);
         logger.info("class schedule added successfully");
+        return classSchedule1;
+    }
+
+    @Override
+    public ClassSchedule addClassReschedule(ClassScheduleRequest classScheduleRequest, Long userId) {
+        ClassSchedule classSchedule = new ClassSchedule();
+        if(classScheduleRequest.getId() != null){
+            classSchedule = classScheduleRepository.findById(classScheduleRequest.getId()).get();
+
+            //Handle Reschedule logic
+            if (Boolean.TRUE.equals(classScheduleRequest.getIsRescheduled())) {
+                classSchedule.setRescheduleDate(classScheduleRequest.getRescheduleDate());
+                classSchedule.setRescheduleStartTime(classScheduleRequest.getRescheduleStartTime());
+                classSchedule.setRescheduleEndTime(classScheduleRequest.getRescheduleEndTime());
+                classSchedule.setRescheduleRoomNo(classScheduleRequest.getRescheduleRoomNo());
+                classSchedule.setRescheduleReason(classScheduleRequest.getRescheduleReason());
+                classSchedule.setIsRescheduled(classScheduleRequest.getIsRescheduled());
+                classSchedule.setIsApproved(classScheduleRequest.getIsApproved()); // pending admin approval
+            }
+        }
+        ClassSchedule classSchedule1 = classScheduleRepository.save(classSchedule);
+        logger.info("class reschedule successfully");
         return classSchedule1;
     }
 
@@ -131,14 +143,14 @@ public class ClassScheduleServiceImpl implements ClassScheduleService{
 
             // Fetch class schedules for all subjects in a single query to reduce database calls
             List<Long> subjectIds = subjectList.stream().map(Subject::getId).collect(Collectors.toList());
-            classScheduleList = classScheduleRepository.findByCourseIdAndIsRescheduledAndSubjectIdIn(student.getCourseId(), subjectIds, true);
+            classScheduleList = classScheduleRepository.findByCourseIdAndIsRescheduledAndIsApprovedAndSubjectIdIn(student.getCourseId(), subjectIds, true);
 
         } else if ("faculty".equals(role)) {
             Faculties faculties = facultiesRepository.findByUserId(userId, true);
-            classScheduleList = classScheduleRepository.findByFacultyIdAndIsRescheduled(faculties.getId(),true, true);
+            classScheduleList = classScheduleRepository.findByFacultyIdAndIsRescheduled(faculties.getId(),true);
 
         } else {
-            classScheduleList = classScheduleRepository.findByIsActiveAndIsRescheduled(true,true, pageable);
+            classScheduleList = classScheduleRepository. findByIsActiveAndIsRescheduledAndIsApprovedNull(true, pageable);
         }
 
         if (classScheduleList.isEmpty()) {
@@ -173,6 +185,13 @@ public class ClassScheduleServiceImpl implements ClassScheduleService{
         response.setEndTime(classSchedule.getEndTime());
         response.setDay(classSchedule.getDay());
         response.setRoomNo(classSchedule.getRoomNo());
+        response.setRescheduleDate(classSchedule.getRescheduleDate());
+        response.setRescheduleStartTime(classSchedule.getRescheduleStartTime());
+        response.setRescheduleEndTime(classSchedule.getRescheduleEndTime());
+        response.setRescheduleRoomNo(classSchedule.getRescheduleRoomNo());
+        response.setRescheduleReason(classSchedule.getRescheduleReason());
+        response.setIsRescheduled(classSchedule.getIsRescheduled());
+        response.setIsApproved(classSchedule.getIsApproved());
         return response;
     }
 
@@ -215,25 +234,19 @@ public class ClassScheduleServiceImpl implements ClassScheduleService{
     }
 
 
-    public ClassSchedule approveOrRejectRescheduleClass(ClassScheduleRequest classScheduleRequest, Long userId) {
+    public ClassSchedule approveOrRejectRescheduleClass(ApproveOrRejectClassRescheduleRequest approveOrRejectClassRescheduleRequest, Long userId) {
         ClassSchedule classSchedule = new ClassSchedule();
-        if(classScheduleRequest.getId() != null){
-            classSchedule = classScheduleRepository.findById(classScheduleRequest.getId()).get();
-            classSchedule.setUpdatedOn(AppUtils.getCurrentIstTime());
-            classSchedule.setUpdatedBy(userId);
+        if(approveOrRejectClassRescheduleRequest.getClassScheduleId() != null){
+            classSchedule = classScheduleRepository.findById(approveOrRejectClassRescheduleRequest.getClassScheduleId()).get();
 
             //Handle Reschedule logic
-            if (Boolean.TRUE.equals(classScheduleRequest.getIsApproved())) {
-                classSchedule.setIsApproved(classScheduleRequest.getIsApproved()); // pending admin approval
+            if (Boolean.TRUE.equals(approveOrRejectClassRescheduleRequest.getIsApproved())) {
+                classSchedule.setIsRescheduled(approveOrRejectClassRescheduleRequest.getIsRescheduled());
+                classSchedule.setIsApproved(approveOrRejectClassRescheduleRequest.getIsApproved()); // pending admin approval
             }
             else{
-//              classSchedule.setRescheduleDate(null);
-//              classSchedule.setRescheduleStartTime(null);
-//              classSchedule.setRescheduleEndTime(null);
-//              classSchedule.setRescheduleRoomNo(null);
-//              classSchedule.setRescheduleReason(null);
-                classSchedule.setIsRescheduled(false);
-                classSchedule.setIsApproved(true);
+                classSchedule.setIsRescheduled(approveOrRejectClassRescheduleRequest.getIsRescheduled());
+                classSchedule.setIsApproved(approveOrRejectClassRescheduleRequest.getIsApproved());
             }
         }
 
