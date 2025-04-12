@@ -223,12 +223,12 @@ public class AssignmentServiceImpl implements AssignmentService{
     }
 
     @Override
-    public List<AssignmentSubmissionResponse> getAssignmentSubmissionList(String role, Long userId, Integer pageNumber) {
+    public List<AssignmentSubmissionResponse> getAssignmentSubmissionList(String role, Long userId, Integer pageNumber, Long courseId, Long subjectId) {
         List<AssignmentSubmissionResponse> assignmentSubmissionResponseList = new ArrayList<>();
         Pageable pageable = AppUtils.getPageRange(pageNumber);
 
         if ("faculty".equalsIgnoreCase(role)) {
-            List<Assignment> assignmentList = assignmentRepository.findByUserId(userId, true);
+            List<Assignment> assignmentList = assignmentRepository.findByUserIdSubjectIdCourseId(userId,courseId,subjectId, true);
             for (Assignment assignment : assignmentList) {
                 List<AssignmentSubmission> submissions = assignmentSubmissionRepository.findAllByAssignmentIdAndIsActive(assignment.getId(), true, pageable);
                 for (AssignmentSubmission submission : submissions) {
@@ -251,9 +251,40 @@ public class AssignmentServiceImpl implements AssignmentService{
                 }
             }
         }
-
         // You can add "student" role handling here if needed.
 
+        return assignmentSubmissionResponseList;
+    }
+
+    @Override
+    public List<AssignmentSubmissionResponse> getAssignmentSubmissionStudentList(String role, Long userId, Integer pageNumber, Long subjectId) {
+        List<AssignmentSubmissionResponse> assignmentSubmissionResponseList = new ArrayList<>();
+        Pageable pageable = AppUtils.getPageRange(pageNumber);
+        Student student = studentRepository.findByUserIdAndIsActive(userId,true);
+        if ("student".equalsIgnoreCase(role)) {
+            List<Assignment> assignmentList = assignmentRepository.findByCourseAndSubjectId(student.getCourseId(),subjectId, true);
+            for (Assignment assignment : assignmentList) {
+                List<AssignmentSubmission> submissions = assignmentSubmissionRepository.findAllByAssignmentIdAndIsActive(assignment.getId(), true, pageable);
+                for (AssignmentSubmission submission : submissions) {
+                    AssignmentSubmissionResponse response = new AssignmentSubmissionResponse();
+                    response.setId(submission.getId());
+                    response.setAssignmentId(submission.getAssignmentId());
+                    response.setStudentId(submission.getStudentId());
+                    response.setSubmissionUrl(submission.getSubmissionUrl());
+                    response.setRemarks(submission.getRemarks());
+                    response.setObtainedMarks(submission.getObtainedMarks());
+                    response.setSubmittedOn(submission.getSubmittedOn());
+                    response.setIsLateSubmission(submission.getIsLateSubmission());
+                    response.setEvaluatedBy(submission.getEvaluatedBy());
+                    response.setEvaluatedOn(submission.getEvaluatedOn());
+                    response.setUpdatedBy(submission.getUpdatedBy());
+                    response.setCreatedOn(submission.getCreatedOn());
+                    response.setUpdatedOn(submission.getUpdatedOn());
+
+                    assignmentSubmissionResponseList.add(response);
+                }
+            }
+        }
         return assignmentSubmissionResponseList;
     }
 

@@ -15,8 +15,9 @@ public interface AssignmentRepository extends JpaRepository<Assignment,Long> {
 
    @Query(value = "select * from assignment where id=:id and is_active =:isActive", nativeQuery = true)
     Assignment findByIdAndIsActive(Long id,Boolean isActive);
-    @Query(value = "select * from assignment where created_by=:userId and is_active =:isActive", nativeQuery = true)
-    List<Assignment> findByUserId(Long userId, Boolean isActive);
+ @Query(value = "SELECT * FROM assignment " +
+         "WHERE created_by = :userId AND is_active = :isActive ",nativeQuery = true)
+ List<Assignment> findByUserId(Long userId, Boolean isActive);
 
     @Query("SELECT a FROM Assignment a WHERE a.subjectId IN :subjectIds AND a.isActive = :isActive")
     List<Assignment> findBySubjectIdInAndIsActive(@Param("subjectIds") List<Long> subjectIds,
@@ -25,4 +26,13 @@ public interface AssignmentRepository extends JpaRepository<Assignment,Long> {
  @Modifying
  @Query(value = "Update assignment set is_active =0 where id = :assignmentId",nativeQuery = true)
  Integer deleteAssignment(Long assignmentId);
+ @Query(value = "SELECT * FROM assignment WHERE course_id = :courseId AND is_active = :isActive AND" +
+         " (:subjectId IS NULL OR subject_id = :subjectId)", nativeQuery = true)
+ List<Assignment> findByCourseAndSubjectId(Long courseId, Long subjectId, Boolean isActive);
+ @Query(value = "SELECT * FROM assignment " +
+         "WHERE created_by = :userId AND is_active = :isActive " +
+         "AND (:subjectId IS NULL OR subject_id = :subjectId) " +
+         "AND (:courseId IS NULL OR course_id = :courseId)",
+         nativeQuery = true)
+ List<Assignment> findByUserIdSubjectIdCourseId(Long userId, Long courseId, Long subjectId,Boolean isActive);
 }

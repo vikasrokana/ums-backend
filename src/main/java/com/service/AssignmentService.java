@@ -21,5 +21,7 @@ public interface AssignmentService {
 
     AssignmentSubmission assignmentSubmission(Long id, Long assignmentId, MultipartFile file, Long userId) throws IOException;
 
-    List<AssignmentSubmissionResponse> getAssignmentSubmissionList(String role, Long userId, Integer pageNumber);
+    List<AssignmentSubmissionResponse> getAssignmentSubmissionList(String role, Long userId, Integer pageNumber,Long courseId, Long subjectId);
+
+    List<AssignmentSubmissionResponse> getAssignmentSubmissionStudentList(String role, Long userId, Integer pageNumber, Long subjectId);
 }

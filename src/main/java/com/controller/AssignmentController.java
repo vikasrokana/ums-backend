@@ -115,12 +115,14 @@ public class AssignmentController {
 
     @ApiOperation(value = "This API will be used to get submission assignment list")
     @RequestMapping(value = {"faculty/get-submission-assignment-list"},method = RequestMethod.GET)
-    public ResponseEntity<?> getSubmissionAssignmentList(@RequestParam(value = "pageNumber", required = false)Integer pageNumber,
+    public ResponseEntity<?> getSubmissionAssignmentList(@RequestParam(value = "courseId",required = false) Long courseId,
+                                                         @RequestParam(value = "subjectId",required = false) Long subjectId,
+            @RequestParam(value = "pageNumber", required = false)Integer pageNumber,
                                                          HttpServletRequest request) throws Exception {
         try {
             String role = appUtils.getCurrentUserRole(request);
             Long userId = appUtils.getUserId(request);
-            List<AssignmentSubmissionResponse> assignmentServiceAssignmentList = assignmentService.getAssignmentSubmissionList(role, userId, pageNumber);
+            List<AssignmentSubmissionResponse> assignmentServiceAssignmentList = assignmentService.getAssignmentSubmissionList(role, userId, pageNumber,courseId,subjectId);
             return ResponseEntity.ok(assignmentServiceAssignmentList);
 
         } catch (Exception e) {
@@ -128,4 +130,21 @@ public class AssignmentController {
             throw new Exception(e.getMessage());
         }
     }
+    @ApiOperation(value = "This API will be used to get submission assignment list of student")
+    @RequestMapping(value = {"student/get-submission-assignment-student-list"},method = RequestMethod.GET)
+    public ResponseEntity<?> getSubmissionAssignmentStudentList(@RequestParam(value = "subjectId",required = false) Long subjectId,
+                                                         @RequestParam(value = "pageNumber", required = false)Integer pageNumber,
+                                                         HttpServletRequest request) throws Exception {
+        try {
+            String role = appUtils.getCurrentUserRole(request);
+            Long userId = appUtils.getUserId(request);
+            List<AssignmentSubmissionResponse> assignmentServiceAssignmentList = assignmentService.getAssignmentSubmissionStudentList(role, userId, pageNumber,subjectId);
+            return ResponseEntity.ok(assignmentServiceAssignmentList);
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new Exception(e.getMessage());
+        }
+    }
+
 }
