@@ -39,7 +39,9 @@ public class ScannerController {
     MarkSheetService markSheetService;
 
     @ApiOperation(value = "This api will be using to store the pdf in database")
-    @RequestMapping(value = "/admin/upload-file", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @RequestMapping(value = "/admin/upload-file", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/admin/upload-file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+
     public ResponseEntity<?> storeFilePdf(@RequestParam(value = "courseId", required = true) Long courseId,
                                           @RequestParam(value = "subjectId", required = true) Long subjectId,
                                           @RequestParam(value = "files", required = true) MultipartFile[] files) throws Exception {

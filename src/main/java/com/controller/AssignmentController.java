@@ -96,6 +96,8 @@ public class AssignmentController {
         }
     }
 
+    // Submission assignment
+
     @ApiOperation(value = "This api will be submission the assignment by student")
     @RequestMapping(value = "/student/submission-assignment", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> submissionAssignment(@RequestParam(value = "id",required = false) Long id,
@@ -143,6 +145,34 @@ public class AssignmentController {
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "This API will be used to get Submission Assignment by id")
+    @RequestMapping(value = {"/student/get-submission-assignment-by-id"}, method = RequestMethod.GET)
+    public ResponseEntity<?> getSubmissionAssignmentById(@RequestParam(value = "subAssignmentId", required = true) Long subAssignmentId) throws Exception {
+        try {
+            AssignmentSubmission assignmentSubmission = assignmentService.getSubmissionAssignmentById(subAssignmentId);
+            return ResponseEntity.ok(assignmentSubmission);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "This API will be using to Delete Submission Assignment")
+    @RequestMapping(value = {"/student/delete-submission-assignment"}, method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteSubmissionAssignment(@RequestParam(value = "subAssignmentId",required = true) Long subAssignmentId) throws Exception {
+        try{
+            Boolean isDeleted = assignmentService.deleteSubAssignment(subAssignmentId);
+            if(isDeleted){
+                return ResponseEntity.ok(new MessageResponse(true,"Submitted Assignment deleted successfully"));
+            } else {
+                return ResponseEntity.ok(new MessageResponse(false,"assignment not found"));
+            }
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
             throw new Exception(e.getMessage());
         }
     }

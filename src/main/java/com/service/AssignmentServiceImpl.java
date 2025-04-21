@@ -288,5 +288,25 @@ public class AssignmentServiceImpl implements AssignmentService{
         return assignmentSubmissionResponseList;
     }
 
+    @Override
+    public AssignmentSubmission getSubmissionAssignmentById(Long subAssignmentId) throws RecordNotFoundException {
+        AssignmentSubmission assignment = assignmentSubmissionRepository.findByIdAndIsActive(subAssignmentId,true);
+        if(null == assignment){
+            throw new RecordNotFoundException("Assignment not found with id:: " + subAssignmentId);
+        }
+        logger.info("Get Assignment using id");
+        return assignment;
+    }
+
+    @Override
+    public Boolean deleteSubAssignment(Long subAssignmentId) {
+        Integer isDeleted = assignmentSubmissionRepository.deleteAssignment(subAssignmentId);
+        if( isDeleted != 0){
+            logger.info("submitted Assignment deleted Successfully");
+            return true;
+        }
+        return false;
+    }
+
 
 }
